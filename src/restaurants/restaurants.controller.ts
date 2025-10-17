@@ -8,11 +8,19 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { RestaurantsService } from './restaurants.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
+import { QueryRestaurantsDto } from './dto/query-restaurants.dto';
 import { Restaurant } from '../entities/restaurant.entity';
 
 @ApiTags('restaurants')
@@ -33,14 +41,51 @@ export class RestaurantsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all restaurants' })
+  @ApiOperation({
+    summary: 'Get restaurants with pagination, filtering, and sorting',
+  })
+  @ApiQuery({ name: 'page', required: false, description: 'Page number' })
+  @ApiQuery({ name: 'limit', required: false, description: 'Items per page' })
+  @ApiQuery({
+    name: 'cuisine',
+    required: false,
+    description: 'Filter by cuisine type',
+  })
+  @ApiQuery({
+    name: 'rating',
+    required: false,
+    description: 'Filter by minimum rating',
+  })
+  @ApiQuery({
+    name: 'neighborhood',
+    required: false,
+    description: 'Filter by neighborhood',
+  })
+  @ApiQuery({ name: 'sort', required: false, description: 'Field to sort by' })
+  @ApiQuery({
+    name: 'order',
+    required: false,
+    description: 'Sort order (asc/desc)',
+  })
   @ApiResponse({
     status: 200,
-    description: 'Return all restaurants.',
-    type: [Restaurant],
+    description: 'Return paginated restaurants with metadata.',
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          type: 'array',
+          items: { $ref: '#/components/schemas/Restaurant' },
+        },
+        total: { type: 'number' },
+        page: { type: 'number' },
+        limit: { type: 'number' },
+        totalPages: { type: 'number' },
+      },
+    },
   })
-  findAll() {
-    return this.restaurantsService.findAll();
+  findAll(@Query() queryDto: QueryRestaurantsDto) {
+    return this.restaurantsService.findAll(queryDto);
   }
 
   @Get(':id')

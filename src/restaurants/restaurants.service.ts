@@ -4,6 +4,12 @@ import { Repository } from 'typeorm';
 import { Restaurant } from '../entities/restaurant.entity';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
+import { QueryRestaurantsDto } from './dto/query-restaurants.dto';
+import {
+  calculateAverageRatings,
+  filterAndSortByRating,
+} from './helpers/rating.helper';
+import { buildWhereConditions, buildOrderBy } from './helpers/query.helper';
 
 @Injectable()
 export class RestaurantsService {
@@ -17,13 +23,56 @@ export class RestaurantsService {
     return await this.restaurantsRepository.save(restaurant);
   }
 
-  async findAll(): Promise<Restaurant[]> {
-    return await this.restaurantsRepository.find();
+  async findAll(queryDto: QueryRestaurantsDto): Promise<{
+    data: (Restaurant & { averageRating: number })[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }> {
+    const {
+      page = 1,
+      limit = 10,
+      cuisine,
+      neighborhood,
+      rating,
+      sort = 'name',
+      order = 'asc',
+    } = queryDto;
+    const skip = (page - 1) * limit;
+
+    const where = buildWhereConditions({ cuisine, neighborhood });
+    const orderBy = buildOrderBy(sort, order);
+
+    const [restaurants, totalCount] =
+      await this.restaurantsRepository.findAndCount({
+        where,
+        relations: ['reviews'],
+        order: orderBy,
+        skip,
+        take: limit,
+      });
+
+    const restaurantsWithRatings = calculateAverageRatings(restaurants);
+
+    const needsRatingProcessing = rating !== undefined || sort === 'rating';
+    const filteredData = needsRatingProcessing
+      ? filterAndSortByRating(restaurantsWithRatings, { rating, sort, order })
+      : restaurantsWithRatings;
+
+    return {
+      data: filteredData,
+      total: totalCount,
+      page,
+      limit,
+      totalPages: Math.ceil(totalCount / limit),
+    };
   }
 
   async findOne(id: number): Promise<Restaurant> {
     const restaurant = await this.restaurantsRepository.findOne({
       where: { id },
+      relations: ['reviews'],
     });
     if (!restaurant) {
       throw new NotFoundException(`Restaurant with ID ${id} not found`);

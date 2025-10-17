@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { Review } from './review.entity';
 
 @Entity('restaurants')
 export class Restaurant {
@@ -73,4 +74,7 @@ export class Restaurant {
   })
   @Column({ type: 'text', nullable: true, name: 'cuisine_type' })
   cuisine_type: string;
+
+  @OneToMany(() => Review, (review) => review.restaurant)
+  reviews: Review[];
 }

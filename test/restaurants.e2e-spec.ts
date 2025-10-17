@@ -1,0 +1,587 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ValidationPipe } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import request from 'supertest';
+import { AppModule } from '../src/app.module';
+import { Restaurant } from '../src/entities/restaurant.entity';
+import { Review } from '../src/entities/review.entity';
+import { Express } from 'express';
+
+interface RestaurantWithRating extends Restaurant {
+  averageRating?: number;
+}
+
+interface RestaurantsListResponse {
+  data: RestaurantWithRating[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+describe('Restaurants', () => {
+  let app: INestApplication;
+  let restaurantRepository: Repository<Restaurant>;
+  let reviewRepository: Repository<Review>;
+
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [
+        TypeOrmModule.forRoot({
+          type: 'sqlite',
+          database: ':memory:',
+          entities: [Restaurant, Review],
+          synchronize: true,
+        }),
+        AppModule,
+      ],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    );
+
+    restaurantRepository = moduleFixture.get('RestaurantRepository');
+    reviewRepository = moduleFixture.get('ReviewRepository');
+
+    await app.init();
+  });
+
+  beforeEach(async () => {
+    await reviewRepository.clear();
+    await restaurantRepository.clear();
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  describe('POST /restaurants', () => {
+    it('should create a restaurant', () => {
+      const createRestaurantDto = {
+        name: 'Test Restaurant',
+        neighborhood: 'Manhattan',
+        cuisine_type: 'Italian',
+        address: '123 Main St',
+        lat: 40.7128,
+        lng: -74.006,
+      };
+
+      return request(app.getHttpServer() as Express)
+        .post('/restaurants')
+        .send(createRestaurantDto)
+        .expect(201)
+        .expect((res) => {
+          const body = res.body as RestaurantWithRating;
+          expect(body.name).toBe(createRestaurantDto.name);
+          expect(body.neighborhood).toBe(createRestaurantDto.neighborhood);
+          expect(body.cuisine_type).toBe(createRestaurantDto.cuisine_type);
+          expect(body.id).toBeDefined();
+        });
+    });
+
+    it('should fail with invalid data', () => {
+      const invalidDto = {
+        name: '',
+        lat: 91,
+        lng: 181,
+      };
+
+      return request(app.getHttpServer() as Express)
+        .post('/restaurants')
+        .send(invalidDto)
+        .expect(400);
+    });
+
+    it('should fail without required fields', () => {
+      const incompleteDto = {
+        neighborhood: 'Manhattan',
+      };
+
+      return request(app.getHttpServer() as Express)
+        .post('/restaurants')
+        .send(incompleteDto)
+        .expect(400);
+    });
+  });
+
+  describe('GET /restaurants', () => {
+    beforeEach(async () => {
+      const restaurants = [
+        {
+          name: 'Italian Place',
+          neighborhood: 'Manhattan',
+          cuisine_type: 'Italian',
+          address: '123 Main St',
+          lat: 40.7128,
+          lng: -74.006,
+        },
+        {
+          name: 'Mexican Joint',
+          neighborhood: 'Brooklyn',
+          cuisine_type: 'Mexican',
+          address: '456 Oak Ave',
+          lat: 40.6782,
+          lng: -73.9442,
+        },
+        {
+          name: 'Asian Fusion',
+          neighborhood: 'Queens',
+          cuisine_type: 'Asian',
+          address: '789 Pine St',
+          lat: 40.7282,
+          lng: -73.7949,
+        },
+      ];
+
+      for (const restaurant of restaurants) {
+        await restaurantRepository.save(restaurant);
+      }
+
+      const savedRestaurants = await restaurantRepository.find();
+      await reviewRepository.save([
+        {
+          restaurant_id: savedRestaurants[0].id,
+          user_id: 1,
+          rating: 4.0,
+          comments: 'Good food',
+          date: '2025-01-01',
+        },
+        {
+          restaurant_id: savedRestaurants[0].id,
+          user_id: 2,
+          rating: 4.0,
+          comments: 'Nice place',
+          date: '2025-01-02',
+        },
+        {
+          restaurant_id: savedRestaurants[1].id,
+          user_id: 1,
+          rating: 5.0,
+          comments: 'Excellent',
+          date: '2025-01-01',
+        },
+        {
+          restaurant_id: savedRestaurants[1].id,
+          user_id: 2,
+          rating: 4.0,
+          comments: 'Very good',
+          date: '2025-01-02',
+        },
+      ]);
+    });
+
+    it('should return all restaurants', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/restaurants')
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as RestaurantsListResponse;
+          expect(body.data).toHaveLength(3);
+          expect(body.total).toBe(3);
+          expect(body.page).toBe(1);
+          expect(body.limit).toBe(10);
+          expect(body.totalPages).toBe(1);
+        });
+    });
+
+    it('should return restaurants with average ratings', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/restaurants')
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as RestaurantsListResponse;
+          expect(body.data[0].averageRating).toBe(0);
+          expect(body.data[1].averageRating).toBe(4);
+          expect(body.data[2].averageRating).toBe(4.5);
+        });
+    });
+
+    it('should filter by cuisine', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/restaurants?cuisine=Italian')
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as RestaurantsListResponse;
+          expect(body.data).toHaveLength(1);
+          expect(body.data[0].cuisine_type).toBe('Italian');
+        });
+    });
+
+    it('should filter by neighborhood', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/restaurants?neighborhood=Brooklyn')
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as RestaurantsListResponse;
+          expect(body.data).toHaveLength(1);
+          expect(body.data[0].neighborhood).toBe('Brooklyn');
+        });
+    });
+
+    it('should filter by rating', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/restaurants?rating=4.5')
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as RestaurantsListResponse;
+          expect(body.data).toHaveLength(1);
+          expect(body.data[0].averageRating).toBeGreaterThanOrEqual(4.5);
+        });
+    });
+
+    it('should sort by cuisine_type', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/restaurants?sort=cuisine_type&order=asc')
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as RestaurantsListResponse;
+          expect(body.data[0].cuisine_type).toBe('Asian');
+          expect(body.data[1].cuisine_type).toBe('Italian');
+          expect(body.data[2].cuisine_type).toBe('Mexican');
+        });
+    });
+
+    it('should sort by rating', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/restaurants?sort=rating&order=desc')
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as RestaurantsListResponse;
+          expect(body.data[0].averageRating).toBe(4.5);
+          expect(body.data[1].averageRating).toBe(4.0);
+          expect(body.data[2].averageRating).toBe(0);
+        });
+    });
+
+    it('should handle pagination', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/restaurants?page=1&limit=2')
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as RestaurantsListResponse;
+          expect(body.data).toHaveLength(2);
+          expect(body.page).toBe(1);
+          expect(body.limit).toBe(2);
+          expect(body.total).toBe(3);
+          expect(body.totalPages).toBe(2);
+        });
+    });
+
+    it('should combine filters', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/restaurants?cuisine=Italian&neighborhood=Manhattan&rating=4.0')
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as RestaurantsListResponse;
+          expect(body.data).toHaveLength(1);
+          expect(body.data[0].cuisine_type).toBe('Italian');
+          expect(body.data[0].neighborhood).toBe('Manhattan');
+          expect(body.data[0].averageRating).toBe(4.0);
+        });
+    });
+
+    it('should fail with invalid query parameters', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/restaurants?page=0')
+        .expect(400);
+    });
+
+    it('should fail with invalid rating', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/restaurants?rating=6.0')
+        .expect(400);
+    });
+
+    it('should fail with invalid sort field', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/restaurants?sort=invalid_field')
+        .expect(400);
+    });
+  });
+
+  describe('GET /restaurants/:id', () => {
+    let restaurant: Restaurant;
+
+    beforeEach(async () => {
+      restaurant = await restaurantRepository.save({
+        name: 'Test Restaurant',
+        neighborhood: 'Manhattan',
+        cuisine_type: 'Italian',
+        address: '123 Main St',
+        lat: 40.7128,
+        lng: -74.006,
+      });
+
+      await reviewRepository.save([
+        {
+          restaurant_id: restaurant.id,
+          user_id: 1,
+          rating: 4.5,
+          comments: 'Great food!',
+          date: '2025-01-01',
+        },
+        {
+          restaurant_id: restaurant.id,
+          user_id: 2,
+          rating: 3.5,
+          comments: 'Good service',
+          date: '2025-01-02',
+        },
+      ]);
+    });
+
+    it('should return a restaurant by id', () => {
+      return request(app.getHttpServer() as Express)
+        .get(`/restaurants/${restaurant.id}`)
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as RestaurantWithRating;
+          expect(body.id).toBe(restaurant.id);
+          expect(body.name).toBe(restaurant.name);
+          expect(body.reviews).toHaveLength(2);
+        });
+    });
+
+    it('should return 404 for non-existent restaurant', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/restaurants/999')
+        .expect(404)
+        .expect((res) => {
+          const body = res.body as { message: string };
+          expect(body.message).toBe('Restaurant with ID 999 not found');
+        });
+    });
+  });
+
+  describe('PATCH /restaurants/:id', () => {
+    let restaurant: Restaurant;
+
+    beforeEach(async () => {
+      restaurant = await restaurantRepository.save({
+        name: 'Test Restaurant',
+        neighborhood: 'Manhattan',
+        cuisine_type: 'Italian',
+        address: '123 Main St',
+        lat: 40.7128,
+        lng: -74.006,
+      });
+    });
+
+    it('should update a restaurant', () => {
+      const updateDto = {
+        name: 'Updated Restaurant',
+        cuisine_type: 'French',
+      };
+
+      return request(app.getHttpServer() as Express)
+        .patch(`/restaurants/${restaurant.id}`)
+        .send(updateDto)
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as RestaurantWithRating;
+          expect(body.name).toBe(updateDto.name);
+          expect(body.cuisine_type).toBe(updateDto.cuisine_type);
+          expect(body.id).toBe(restaurant.id);
+        });
+    });
+
+    it('should fail with invalid data', () => {
+      const invalidDto = {
+        lat: 91,
+      };
+
+      return request(app.getHttpServer() as Express)
+        .patch(`/restaurants/${restaurant.id}`)
+        .send(invalidDto)
+        .expect(400);
+    });
+
+    it('should return 404 for non-existent restaurant', () => {
+      return request(app.getHttpServer() as Express)
+        .patch('/restaurants/999')
+        .send({ name: 'Updated' })
+        .expect(404)
+        .expect((res) => {
+          const body = res.body as { message: string };
+          expect(body.message).toBe('Restaurant with ID 999 not found');
+        });
+    });
+  });
+
+  describe('DELETE /restaurants/:id', () => {
+    let restaurant: Restaurant;
+
+    beforeEach(async () => {
+      restaurant = await restaurantRepository.save({
+        name: 'Test Restaurant',
+        neighborhood: 'Manhattan',
+        cuisine_type: 'Italian',
+        address: '123 Main St',
+        lat: 40.7128,
+        lng: -74.006,
+      });
+    });
+
+    it('should delete a restaurant', () => {
+      return request(app.getHttpServer() as Express)
+        .delete(`/restaurants/${restaurant.id}`)
+        .expect(204);
+    });
+
+    it('should return 404 for non-existent restaurant', () => {
+      return request(app.getHttpServer() as Express)
+        .delete('/restaurants/999')
+        .expect(404)
+        .expect((res) => {
+          const body = res.body as { message: string };
+          expect(body.message).toBe('Restaurant with ID 999 not found');
+        });
+    });
+  });
+
+  describe('Integration scenarios', () => {
+    beforeEach(async () => {
+      const restaurants = [
+        {
+          name: 'High Rated Italian',
+          neighborhood: 'Manhattan',
+          cuisine_type: 'Italian',
+          address: '123 Main St',
+          lat: 40.7128,
+          lng: -74.006,
+        },
+        {
+          name: 'Low Rated Mexican',
+          neighborhood: 'Brooklyn',
+          cuisine_type: 'Mexican',
+          address: '456 Oak Ave',
+          lat: 40.6782,
+          lng: -73.9442,
+        },
+        {
+          name: 'No Reviews Asian',
+          neighborhood: 'Queens',
+          cuisine_type: 'Asian',
+          address: '789 Pine St',
+          lat: 40.7282,
+          lng: -73.7949,
+        },
+        {
+          name: 'First Mexican',
+          neighborhood: 'Manhattan',
+          cuisine_type: 'Mexican',
+          address: '123 Main St',
+          lat: 40.7128,
+          lng: -74.006,
+        },
+        {
+          name: 'Second Mexican',
+          neighborhood: 'Manhattan',
+          cuisine_type: 'Mexican',
+          address: '456 Oak Ave',
+          lat: 40.6782,
+          lng: -73.9442,
+        },
+      ];
+
+      const savedRestaurants: Restaurant[] = [];
+      for (const restaurant of restaurants) {
+        savedRestaurants.push(await restaurantRepository.save(restaurant));
+      }
+
+      await reviewRepository.save([
+        {
+          restaurant_id: savedRestaurants[0].id,
+          user_id: 1,
+          rating: 5.0,
+          comments: 'Excellent',
+          date: '2025-01-01',
+        },
+        {
+          restaurant_id: savedRestaurants[0].id,
+          user_id: 2,
+          rating: 4.5,
+          comments: 'Very good',
+          date: '2025-01-02',
+        },
+        {
+          restaurant_id: savedRestaurants[1].id,
+          user_id: 1,
+          rating: 2.0,
+          comments: 'Poor',
+          date: '2025-01-01',
+        },
+        {
+          restaurant_id: savedRestaurants[1].id,
+          user_id: 2,
+          rating: 2.5,
+          comments: 'Not great',
+          date: '2025-01-02',
+        },
+      ]);
+    });
+
+    it('should handle complex filtering and sorting', () => {
+      return request(app.getHttpServer() as Express)
+        .get(
+          '/restaurants?cuisine=Italian&rating=4.0&sort=rating&order=desc&page=1&limit=10',
+        )
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as RestaurantsListResponse;
+          expect(body.data).toHaveLength(1);
+          expect(body.data[0].cuisine_type).toBe('Italian');
+          expect(body.data[0].averageRating).toBe(4.75);
+        });
+    });
+
+    it('should handle pagination', () => {
+      return request(app.getHttpServer() as Express)
+        .get(
+          '/restaurants?cuisine=Mexican&neighborhood=Manhattan&page=2&limit=1',
+        )
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as RestaurantsListResponse;
+          console.log(
+            'Pagination test - Page 2:',
+            JSON.stringify(body, null, 2),
+          );
+          expect(body.data).toHaveLength(1);
+          expect(body.data[0].cuisine_type).toBe('Mexican');
+          expect(body.data[0].name).toBe('Second Mexican');
+        });
+    });
+
+    it('should handle empty results', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/restaurants?cuisine=French')
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as RestaurantsListResponse;
+          expect(body.data).toHaveLength(0);
+          expect(body.total).toBe(0);
+        });
+    });
+
+    it('should handle restaurants with no reviews', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/restaurants?cuisine=Asian')
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as RestaurantsListResponse;
+          expect(body.data).toHaveLength(1);
+          expect(body.data[0].averageRating).toBe(0);
+          expect(body.data[0].name).toBe('No Reviews Asian');
+        });
+    });
+  });
+});
