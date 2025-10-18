@@ -68,7 +68,7 @@ export class ReviewsController {
   }
 }
 
-@ApiTags('user-reviews')
+@ApiTags('reviews')
 @Controller('me')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
