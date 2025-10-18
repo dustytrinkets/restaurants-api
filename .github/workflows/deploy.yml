@@ -33,6 +33,17 @@ jobs:
     - name: Build application
       run: npm run build
       
+    - name: Copy existing database
+      run: |
+        mkdir -p /tmp/data
+        cp data/restaurants.db /tmp/restaurants.db
+        echo "✅ Database copied from data/restaurants.db"
+      
+    - name: Check database content
+      run: |
+        sqlite3 /tmp/restaurants.db "SELECT COUNT(*) as restaurant_count FROM restaurants;"
+        sqlite3 /tmp/restaurants.db "SELECT COUNT(*) as migration_count FROM migrations;"
+      
     - name: Run migrations
       run: npm run migration:run
       env:
