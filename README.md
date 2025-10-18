@@ -28,8 +28,8 @@
 
 ### Middlewares    
 
-- [ ] Middleware for authentication
-- [ ] Middleware for roles
+- [x] Middleware for authentication
+- [x] Middleware for roles
 
 ### Scalability
 
