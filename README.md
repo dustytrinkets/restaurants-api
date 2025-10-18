@@ -38,9 +38,13 @@ You will need to think of some strategies to make your application scalable.
 
 Some pointers or ideas:
 
-- [ ] Rate Limiting
+- [X] Rate Limiting
 - [ ] Caching
+  - [ ] cache /restaurants results
 - [ ] Docker
+- [ ] Pagination enforced: never allow full-table queries.
+- [ ] Database indexing: ensure indexes on cuisine, rating, neighborhood.
+
 
 ### Architecture diagram
 
@@ -55,6 +59,14 @@ Imagine that after some time our application has *100.000 users per week* and so
 ## Bonus points
 
 - [ ] Deploy the app.
-- [ ] Write realistic unit & end-to-end tests.
-- [ ] Good documentation is appreciated (with tools like Swagger, Postman, etc or just explicit guidance in the README.md)
+- [X] Write realistic unit & end-to-end tests.
+- [X] Good documentation is appreciated (with tools like Swagger, Postman, etc or just explicit guidance in the README.md)
 - [ ] For statistics: if you have time, create a query that returns the top 3 rated restaurants, the top 3 most reviewed restaurants.
+
+## TODO:
+- [X] Logs
+- [X] Connection pooling for DB --> not possible on sqlite
+- [ ] Health checks and monitoring (Prometheus, Grafana, etc).
+- [ ] Async queue for heavy tasks (reviews analytics, stats aggregation).
+
+- [ ] Review README after finishing

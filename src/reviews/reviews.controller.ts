@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import {
   ApiTags,
   ApiOperation,
@@ -36,6 +37,7 @@ export class ReviewsController {
 
   @Post(':id/reviews')
   @Roles(UserRole.USER, UserRole.ADMIN)
+  @Throttle({ default: { limit: 10, ttl: 3600000 } }) // 10 per hour per user
   @ApiOperation({ summary: 'Create a review for a restaurant' })
   @ApiParam({
     name: 'id',

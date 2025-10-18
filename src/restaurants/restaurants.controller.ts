@@ -11,6 +11,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { Public } from '../auth/decorators/public.decorator';
 import {
   ApiTags,
@@ -56,6 +57,7 @@ export class RestaurantsController {
 
   @Get()
   @Public()
+  @Throttle({ default: { limit: 60, ttl: 60000 } }) // 60 req/min per IP
   @ApiOperation({
     summary: 'Get restaurants with pagination, filtering, and sorting',
   })

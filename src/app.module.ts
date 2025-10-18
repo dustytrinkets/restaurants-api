@@ -11,6 +11,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { AdminModule } from './admin/admin.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
+import { CustomRateLimitGuard } from './common/guards/custom-rate-limit.guard';
+import { getRateLimitConfig } from './common/config/rate-limit.factory';
 import { LoggingService } from './common/services/logging.service';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 
@@ -22,6 +24,7 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: false,
     }),
+    ThrottlerModule.forRoot(getRateLimitConfig()),
     RestaurantsModule,
     ReviewsModule,
     FavoritesModule,
@@ -36,6 +39,10 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: CustomRateLimitGuard,
     },
     {
       provide: APP_INTERCEPTOR,
