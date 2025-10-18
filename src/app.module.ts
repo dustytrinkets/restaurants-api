@@ -18,6 +18,7 @@ import { LoggingService } from './common/services/logging.service';
 import { CacheService } from './common/services/cache.service';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { cacheConfig } from './common/config/cache.config';
+import { MigrationModule } from './common/modules/migration.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { cacheConfig } from './common/config/cache.config';
     AuthModule,
     UsersModule,
     AdminModule,
+    MigrationModule,
   ],
   controllers: [AppController],
   providers: [
