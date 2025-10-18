@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { MigrationService } from './common/services/migration.service';
 
 function setupSwagger(app: INestApplication) {
   const config = new DocumentBuilder()
@@ -20,9 +19,6 @@ function setupSwagger(app: INestApplication) {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  const migrationService = app.get(MigrationService);
-  await migrationService.runMigrations();
 
   app.useGlobalPipes(
     new ValidationPipe({

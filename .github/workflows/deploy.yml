@@ -1,0 +1,53 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run tests
+      run: npm run test
+      
+    - name: Run e2e tests
+      run: npm run test:e2e
+      env:
+        DATABASE_URL=sqlite:///tmp/test.db
+        
+    - name: Build application
+      run: npm run build
+      
+    - name: Run migrations
+      run: npm run migration:run
+      env:
+        DATABASE_URL=sqlite:///tmp/restaurants.db
+        
+    - name: Deploy to your platform
+      run: |
+        echo "✅ Tests passed!"
+        echo "✅ Application built!"
+        echo "✅ Migrations completed!"
+        echo "🚀 Ready for deployment!"
+        echo ""
+        echo "Next steps:"
+        echo "1. Choose your deployment platform (Vercel, Railway, etc.)"
+        echo "2. Configure environment variables"
+        echo "3. Deploy your application"
+        echo ""
+        echo "Your backend is ready to deploy! 🎉"

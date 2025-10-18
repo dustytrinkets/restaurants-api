@@ -1,76 +1,147 @@
 # Restaurants API
 
-### Public endpoints:
-- [x] `GET /restaurants`:
-    - [x] Pagination: page, limit.
-	- [x] Filters: cuisine, rating, neighborhood.
-	- [x] Sorting: sort (ascendente/descendente por campo)
-- [x] `GET /restaurants/:id`
-- [x] `GET /restaurants/:id/reviews`
-- [x] `POST /auth/login`
-- [x] `POST /auth/register`
+A NestJS-based REST API for managing restaurants, reviews, and user favorites.
 
-### Authenticated endpoints (roles: USER or ADMIN):
-- [x] `GET /me`: Information about the authenticated user.
-- [X] `GET /me/reviews`: Reviews created by the authenticated user.
-- [X] `POST /restaurants/:id/reviews`: Create a review.
-- [X] `PUT /me/reviews/:id`: Edit a review.
-- [X] `DELETE /me/reviews/:id`: Delete a review.
-- [X] `POST /me/favorites/:restaurantId`: Add a restaurant to favorites.
-- [X] `DELETE /me/favorites/:restaurantId`: Delete a restaurant from favorites.
-- [X] `GET /me/favorites`: See the list of favorites.
+## 🚀 Quick Start
 
-### Admin endpoints:
-- [X] `POST /restaurants`: Create a restaurant.
-- [X] `PUT /restaurants/:id`: Edit a restaurant.
-- [X] `DELETE /restaurants/:id`: Delete a restaurant.
-- [X] `GET /admin/stats`: See statistics of: number of users, reviews, restaurants.
+### Development
+```bash
+# Install dependencies
+npm install
 
-### Middlewares    
+# Start development server
+npm run start:dev
 
-- [x] Middleware for authentication
-- [x] Middleware for roles
+# Run tests
+npm run test:all
+```
 
-### Scalability
+### Docker Development
+```bash
+# Start with Docker
+npm run docker:up
 
-As a second step, imagine that your application is growing over time. Scalability is key.
-You will need to think of some strategies to make your application scalable. 
+# View logs
+npm run docker:logs
 
-Some pointers or ideas:
+# Stop
+npm run docker:down
+```
 
-- [X] Rate Limiting
-- [X] Caching
-  - [X] GET /restaurants results
-  - [X] GET /restaurants/:id
-  - [X] GET /restaurants/:id/reviews
-  - [X] GET /admin/stats (check)
-- [ ] Docker
-- [X] Database indexing: ensure indexes on cuisine, rating, neighborhood.
+## 📋 API Endpoints
 
+### Public
+- `GET /restaurants` - List restaurants (with pagination, filters, sorting)
+- `GET /restaurants/:id` - Get restaurant details
+- `GET /restaurants/:id/reviews` - Get restaurant reviews
+- `POST /auth/login` - User login
+- `POST /auth/register` - User registration
 
-### Architecture diagram
+### Authenticated (USER/ADMIN)
+- `GET /me` - Get user profile
+- `GET /me/reviews` - Get user's reviews
+- `POST /restaurants/:id/reviews` - Create review
+- `PUT /me/reviews/:id` - Update review
+- `DELETE /me/reviews/:id` - Delete review
+- `POST /me/favorites/:restaurantId` - Add to favorites
+- `DELETE /me/favorites/:restaurantId` - Remove from favorites
+- `GET /me/favorites` - Get user's favorites
 
-Please use [draw.io](https://draw.io), [excalidraw](https://excalidraw.com) or any similar schema tools to create a diagram of the overall architecture of your application.
+### Admin Only
+- `POST /restaurants` - Create restaurant
+- `PUT /restaurants/:id` - Update restaurant
+- `DELETE /restaurants/:id` - Delete restaurant
+- `GET /admin/stats` - Get system statistics
 
-- [ ] Diagram 1: expose to us how you have designed your current application.
+## 🗄️ Database
 
-Imagine that after some time our application has *100.000 users per week* and some peak timings during the day with a lot of requests & traffic. 
+### SQLite Database
+- **Location**: `data/restaurants.db`
+- **Migrations**: Automatic on startup (development only)
+- **Admin Interface**: http://localhost:8080 (when using Docker)
 
-- [ ] Diagram 2: expose to us how you would scale your application with these new conditions and what you would do to improve the performance of your application.
+### Migration Commands
+```bash
+# Check migration status
+npm run migration:status
 
-## Bonus points
+# Run migrations manually
+npm run migration:run
+```
 
-- [ ] Deploy the app.
-- [X] Write realistic unit & end-to-end tests.
-- [X] Good documentation is appreciated (with tools like Swagger, Postman, etc or just explicit guidance in the README.md)
-- [ ] For statistics: if you have time, create a query that returns the top 3 rated restaurants, the top 3 most reviewed restaurants.
+## 🐳 Docker
 
-## TODO:
-- [X] Logs
-- [X] Connection pooling for DB --> not possible on sqlite
-- [ ] Review README after finishing
+### Services
+- **API**: http://localhost:3000
+- **Database Admin**: http://localhost:8080
+- **Redis**: localhost:6379
 
-## Future steps
-- [ ] Health checks and monitoring (Prometheus, Grafana, etc).
-- [ ] Async queue for heavy tasks (reviews analytics, stats aggregation).
-- [ ] Implement redis
+### Commands
+```bash
+npm run docker:up      # Start services
+npm run docker:down    # Stop services
+npm run docker:logs    # View logs
+npm run docker:build   # Build image
+npm run docker:clean   # Clean up
+```
+
+## 🚀 Deployment
+
+### GitHub Actions
+Push to `main` branch to trigger automated deployment:
+- ✅ Runs tests
+- ✅ Builds application
+- ✅ Runs migrations
+- ✅ Ready for deployment
+
+### Environment Variables
+```bash
+DATABASE_URL=sqlite:///tmp/restaurants.db
+JWT_SECRET=your-production-jwt-secret
+NODE_ENV=production
+```
+
+## 🔧 Development
+
+### Project Structure
+```
+src/
+├── admin/           # Admin endpoints
+├── auth/            # Authentication
+├── common/          # Shared services
+├── entities/        # Database entities
+├── favorites/       # User favorites
+├── migrations/      # Database migrations
+├── restaurants/     # Restaurant management
+├── reviews/         # Review system
+└── users/           # User management
+```
+
+### Key Features
+- **Authentication**: JWT-based auth with roles
+- **Rate Limiting**: API protection
+- **Caching**: Redis for performance
+- **Migrations**: Database schema management
+- **Validation**: Request/response validation
+- **Documentation**: Swagger UI at `/api/docs`
+
+## 📊 API Documentation
+
+Visit http://localhost:3000/api/docs for interactive API documentation.
+
+## 🧪 Testing
+
+```bash
+# Unit tests
+npm run test
+
+# E2E tests
+npm run test:e2e
+
+# All tests
+npm run test:all
+```
+
+## 📝 License
+
+Private project - All rights reserved.

@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # Application service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: restaurants-api-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DATABASE_URL=sqlite:///app/data/restaurants.db
+      - JWT_SECRET=dev-jwt-secret
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./data:/app/data
+      - ./logs:/app/logs
+    networks:
+      - restaurants-network
+    command: ["npm", "run", "start:dev"]
+
+  # Redis service
+  redis:
+    image: redis:7-alpine
+    container_name: restaurants-redis-dev
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - restaurants-network
+
+  # Database admin interface
+  sqlite-web:
+    image: coleifer/sqlite-web:latest
+    container_name: restaurants-sqlite-web-dev
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/data
+    environment:
+      - SQLITE_DATABASE=/data/restaurants.db
+    networks:
+      - restaurants-network
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  restaurants-network:
+    driver: bridge

@@ -205,4 +205,26 @@ export class MigrationService {
       migrations,
     };
   }
+
+  /**
+   * Get pending migrations
+   */
+  async getPendingMigrations(): Promise<Migration[]> {
+    try {
+      await this.ensureMigrationsTable();
+      const migrationFiles = this.getMigrationFiles();
+      const executedMigrations = await this.getExecutedMigrations();
+
+      return migrationFiles.filter(
+        (migration) => !executedMigrations.includes(migration.name),
+      );
+    } catch (error) {
+      this.loggingService.logMessage(
+        `Error getting pending migrations: ${error instanceof Error ? error.message : error}`,
+        'MIGRATION',
+        'error',
+      );
+      throw error;
+    }
+  }
 }
