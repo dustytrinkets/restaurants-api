@@ -39,15 +39,15 @@ jobs:
         cp data/restaurants.db /tmp/restaurants.db
         echo "✅ Database copied from data/restaurants.db"
       
-    - name: Check database content
+    - name: Verify database content
       run: |
+        echo "📊 Database verification:"
         sqlite3 /tmp/restaurants.db "SELECT COUNT(*) as restaurant_count FROM restaurants;"
+        sqlite3 /tmp/restaurants.db "SELECT COUNT(*) as user_count FROM users;"
+        sqlite3 /tmp/restaurants.db "SELECT COUNT(*) as review_count FROM reviews;"
         sqlite3 /tmp/restaurants.db "SELECT COUNT(*) as migration_count FROM migrations;"
-      
-    - name: Run migrations
-      run: npm run migration:run
-      env:
-        DATABASE_URL: sqlite:///tmp/restaurants.db
+        echo "✅ Database is ready with existing data"
+        echo "ℹ️  No migrations needed - using existing database with all data"
         
     - name: Deploy to your platform
       run: |
