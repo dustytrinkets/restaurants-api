@@ -16,9 +16,9 @@
 - [X] `POST /restaurants/:id/reviews`: Create a review.
 - [X] `PUT /me/reviews/:id`: Edit a review.
 - [X] `DELETE /me/reviews/:id`: Delete a review.
-- [ ] `POST /me/favorites/:restaurantId`: Add a restaurant to favorites.
-- [ ] `DELETE /me/favorites/:restaurantId`: Delete a restaurant from favorites.
-- [ ] `GET /me/favorites`: See the list of favorites.
+- [X] `POST /me/favorites/:restaurantId`: Add a restaurant to favorites.
+- [X] `DELETE /me/favorites/:restaurantId`: Delete a restaurant from favorites.
+- [X] `GET /me/favorites`: See the list of favorites.
 
 ### Admin endpoints:
 - [X] `POST /restaurants`: Create a restaurant.
