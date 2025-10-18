@@ -11,7 +11,7 @@
 - [x] `POST /auth/register`
 
 ### Authenticated endpoints (roles: USER or ADMIN):
-- [ ] `GET /me`: Information about the authenticated user.
+- [x] `GET /me`: Information about the authenticated user.
 - [ ] `GET /me/reviews`: Reviews created by the authenticated user.
 - [ ] `POST /restaurants/:id/reviews`: Create a review.
 - [ ] `PUT /me/reviews/:id`: Edit a review.
