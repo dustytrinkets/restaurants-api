@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Favorite } from '../entities/favorite.entity';
 import { Restaurant } from '../entities/restaurant.entity';
+import { LoggingService } from '../common/services/logging.service';
 
 @Injectable()
 export class FavoritesService {
@@ -15,11 +16,13 @@ export class FavoritesService {
     private favoritesRepository: Repository<Favorite>,
     @InjectRepository(Restaurant)
     private restaurantsRepository: Repository<Restaurant>,
+    private loggingService: LoggingService,
   ) {}
 
   async addToFavorites(
     userId: number,
     restaurantId: number,
+    ip?: string,
   ): Promise<Favorite> {
     const restaurant = await this.restaurantsRepository.findOne({
       where: { id: restaurantId },
@@ -42,12 +45,20 @@ export class FavoritesService {
       restaurant_id: restaurantId,
     });
 
-    return await this.favoritesRepository.save(favorite);
+    const savedFavorite = await this.favoritesRepository.save(favorite);
+
+    this.loggingService.logMessage(
+      `Favorite added: Restaurant ${restaurantId} by user ${userId} from IP: ${ip || 'unknown'}`,
+      'FAVORITE',
+    );
+
+    return savedFavorite;
   }
 
   async removeFromFavorites(
     userId: number,
     restaurantId: number,
+    ip?: string,
   ): Promise<void> {
     const favorite = await this.favoritesRepository.findOne({
       where: { user_id: userId, restaurant_id: restaurantId },
@@ -57,6 +68,11 @@ export class FavoritesService {
     }
 
     await this.favoritesRepository.remove(favorite);
+
+    this.loggingService.logMessage(
+      `Favorite removed: Restaurant ${restaurantId} by user ${userId} from IP: ${ip || 'unknown'}`,
+      'FAVORITE',
+    );
   }
 
   async getUserFavorites(userId: number): Promise<Favorite[]> {

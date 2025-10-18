@@ -12,6 +12,7 @@ import { UserRole } from '../common/enums/user-role.enum';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
+import { LoggingService } from '../common/services/logging.service';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +20,7 @@ export class AuthService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private jwtService: JwtService,
+    private loggingService: LoggingService,
   ) {}
   async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
     const { email, password, name, role = UserRole.USER } = registerDto;
@@ -50,6 +52,12 @@ export class AuthService {
     };
     const access_token = this.jwtService.sign(payload);
 
+    // Log successful registration
+    this.loggingService.logMessage(
+      `User registration: ${savedUser.email} (ID: ${savedUser.id}) from IP: unknown`,
+      'AUTH',
+    );
+
     return {
       access_token,
       user_id: savedUser.id,
@@ -67,17 +75,33 @@ export class AuthService {
     });
 
     if (!user) {
+      this.loggingService.logMessage(
+        `Failed login attempt: ${email} from IP: unknown - User not found`,
+        'AUTH',
+        'warn',
+      );
       throw new UnauthorizedException('Invalid credentials');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
+      this.loggingService.logMessage(
+        `Failed login attempt: ${email} from IP: unknown - Invalid password`,
+        'AUTH',
+        'warn',
+      );
       throw new UnauthorizedException('Invalid credentials');
     }
 
     const payload = { sub: user.id, email: user.email, role: user.role };
     const access_token = this.jwtService.sign(payload);
+
+    // Log successful login
+    this.loggingService.logMessage(
+      `User login: ${user.email} (ID: ${user.id}) from IP: unknown`,
+      'AUTH',
+    );
 
     return {
       access_token,

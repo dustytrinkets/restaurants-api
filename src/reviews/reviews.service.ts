@@ -5,6 +5,7 @@ import { Review } from '../entities/review.entity';
 import { Restaurant } from '../entities/restaurant.entity';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
+import { LoggingService } from '../common/services/logging.service';
 
 @Injectable()
 export class ReviewsService {
@@ -13,6 +14,7 @@ export class ReviewsService {
     private reviewsRepository: Repository<Review>,
     @InjectRepository(Restaurant)
     private restaurantsRepository: Repository<Restaurant>,
+    private loggingService: LoggingService,
   ) {}
 
   async findByRestaurant(restaurantId: number): Promise<Review[]> {
@@ -35,6 +37,7 @@ export class ReviewsService {
     restaurantId: number,
     userId: number,
     createReviewDto: CreateReviewDto,
+    ip?: string,
   ): Promise<Review> {
     const restaurant = await this.restaurantsRepository.findOne({
       where: { id: restaurantId },
@@ -51,7 +54,14 @@ export class ReviewsService {
       ...createReviewDto,
     });
 
-    return await this.reviewsRepository.save(review);
+    const savedReview = await this.reviewsRepository.save(review);
+
+    this.loggingService.logMessage(
+      `Review created: ID ${savedReview.id} for restaurant ${restaurantId} by user ${userId} from IP: ${ip || 'unknown'}`,
+      'REVIEW',
+    );
+
+    return savedReview;
   }
 
   async findByUser(userId: number): Promise<Review[]> {
@@ -77,15 +87,28 @@ export class ReviewsService {
     reviewId: number,
     userId: number,
     updateReviewDto: UpdateReviewDto,
+    ip?: string,
   ): Promise<Review> {
     const review = await this.findOneByUser(reviewId, userId);
 
     Object.assign(review, updateReviewDto);
-    return await this.reviewsRepository.save(review);
+    const updatedReview = await this.reviewsRepository.save(review);
+
+    this.loggingService.logMessage(
+      `Review updated: ID ${reviewId} by user ${userId} from IP: ${ip || 'unknown'}`,
+      'REVIEW',
+    );
+
+    return updatedReview;
   }
 
-  async remove(reviewId: number, userId: number): Promise<void> {
+  async remove(reviewId: number, userId: number, ip?: string): Promise<void> {
     const review = await this.findOneByUser(reviewId, userId);
     await this.reviewsRepository.remove(review);
+
+    this.loggingService.logMessage(
+      `Review deleted: ID ${reviewId} by user ${userId} from IP: ${ip || 'unknown'}`,
+      'REVIEW',
+    );
   }
 }

@@ -10,17 +10,32 @@ import {
   mapResultsWithAverageRating,
 } from './helpers/rating.helper';
 import { RestaurantWithRating } from './interfaces/restaurant-with-rating.interface';
+import { LoggingService } from '../common/services/logging.service';
 
 @Injectable()
 export class RestaurantsService {
   constructor(
     @InjectRepository(Restaurant)
     private restaurantsRepository: Repository<Restaurant>,
+    private loggingService: LoggingService,
   ) {}
 
-  async create(createRestaurantDto: CreateRestaurantDto): Promise<Restaurant> {
+  async create(
+    createRestaurantDto: CreateRestaurantDto,
+    userId?: number,
+    ip?: string,
+  ): Promise<Restaurant> {
     const restaurant = this.restaurantsRepository.create(createRestaurantDto);
-    return await this.restaurantsRepository.save(restaurant);
+    const savedRestaurant = await this.restaurantsRepository.save(restaurant);
+
+    if (userId) {
+      this.loggingService.logMessage(
+        `Restaurant created: ID ${savedRestaurant.id} by user ${userId} from IP: ${ip || 'unknown'}`,
+        'RESTAURANT',
+      );
+    }
+
+    return savedRestaurant;
   }
 
   async findAll(queryDto: QueryRestaurantsDto): Promise<{
@@ -107,14 +122,32 @@ export class RestaurantsService {
   async update(
     id: number,
     updateRestaurantDto: UpdateRestaurantDto,
+    userId?: number,
+    ip?: string,
   ): Promise<Restaurant> {
     const restaurant = await this.findOne(id);
     Object.assign(restaurant, updateRestaurantDto);
-    return await this.restaurantsRepository.save(restaurant);
+    const updatedRestaurant = await this.restaurantsRepository.save(restaurant);
+
+    if (userId) {
+      this.loggingService.logMessage(
+        `Restaurant updated: ID ${id} by user ${userId} from IP: ${ip || 'unknown'}`,
+        'RESTAURANT',
+      );
+    }
+
+    return updatedRestaurant;
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: number, userId?: number, ip?: string): Promise<void> {
     const restaurant = await this.findOne(id);
     await this.restaurantsRepository.remove(restaurant);
+
+    if (userId) {
+      this.loggingService.logMessage(
+        `Restaurant deleted: ID ${id} by user ${userId} from IP: ${ip || 'unknown'}`,
+        'RESTAURANT',
+      );
+    }
   }
 }
