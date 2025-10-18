@@ -33,7 +33,7 @@ export class FavoritesController {
 
   @Post('favorites/:restaurantId')
   @Roles(UserRole.USER, UserRole.ADMIN)
-  @Throttle({ default: { limit: 60, ttl: 60000 } }) // 60 per minute per user
+  @Throttle({ default: { limit: 60, ttl: 60000 } })
   @ApiOperation({ summary: 'Add a restaurant to favorites' })
   @ApiParam({
     name: 'restaurantId',

@@ -52,7 +52,6 @@ export class AuthService {
     };
     const access_token = this.jwtService.sign(payload);
 
-    // Log successful registration
     this.loggingService.logMessage(
       `User registration: ${savedUser.email} (ID: ${savedUser.id}) from IP: unknown`,
       'AUTH',
@@ -97,7 +96,6 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email, role: user.role };
     const access_token = this.jwtService.sign(payload);
 
-    // Log successful login
     this.loggingService.logMessage(
       `User login: ${user.email} (ID: ${user.id}) from IP: unknown`,
       'AUTH',

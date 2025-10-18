@@ -57,7 +57,7 @@ export class RestaurantsController {
 
   @Get()
   @Public()
-  @Throttle({ default: { limit: 60, ttl: 60000 } }) // 60 req/min per IP
+  @Throttle({ default: { limit: 60, ttl: 60000 } })
   @ApiOperation({
     summary: 'Get restaurants with pagination, filtering, and sorting',
   })
