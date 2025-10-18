@@ -308,10 +308,8 @@ describe('Restaurants', () => {
   });
 
   describe('GET /restaurants/:id', () => {
-    let restaurant: Restaurant;
-
-    beforeEach(async () => {
-      restaurant = await restaurantRepository.save({
+    it('should return a restaurant by id', async () => {
+      const restaurant = await restaurantRepository.save({
         name: 'Test Restaurant',
         neighborhood: 'Manhattan',
         cuisine_type: 'Italian',
@@ -336,9 +334,6 @@ describe('Restaurants', () => {
           date: '2025-01-02',
         },
       ]);
-    });
-
-    it('should return a restaurant by id', () => {
       return request(app.getHttpServer() as Express)
         .get(`/restaurants/${restaurant.id}`)
         .expect(200)
@@ -346,13 +341,89 @@ describe('Restaurants', () => {
           const body = res.body as RestaurantWithRating;
           expect(body.id).toBe(restaurant.id);
           expect(body.name).toBe(restaurant.name);
-          expect(body.reviews).toHaveLength(2);
+          expect(body.neighborhood).toBe(restaurant.neighborhood);
+          expect(body.cuisine_type).toBe(restaurant.cuisine_type);
+          expect(body.address).toBe(restaurant.address);
+          expect(body.lat).toBe(restaurant.lat);
+          expect(body.lng).toBe(restaurant.lng);
+          expect(body.averageRating).toBe(4.0);
         });
     });
 
     it('should return 404 for non-existent restaurant', () => {
       return request(app.getHttpServer() as Express)
         .get('/restaurants/999')
+        .expect(404)
+        .expect((res) => {
+          const body = res.body as { message: string };
+          expect(body.message).toBe('Restaurant with ID 999 not found');
+        });
+    });
+  });
+
+  describe('GET /restaurants/:id/reviews', () => {
+    it('should return reviews for a restaurant', async () => {
+      const restaurant = await restaurantRepository.save({
+        name: 'No Reviews Restaurant',
+        neighborhood: 'Manhattan',
+        cuisine_type: 'Italian',
+        address: '123 Main St',
+        lat: 40.7128,
+        lng: -74.006,
+      });
+
+      await reviewRepository.save([
+        {
+          restaurant_id: restaurant.id,
+          user_id: 1,
+          rating: 4.5,
+          comments: 'Great food!',
+          date: '2025-01-01',
+        },
+        {
+          restaurant_id: restaurant.id,
+          user_id: 2,
+          rating: 3.5,
+          comments: 'Good service',
+          date: '2025-01-02',
+        },
+      ]);
+
+      return request(app.getHttpServer() as Express)
+        .get(`/restaurants/${restaurant.id}/reviews`)
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as Review[];
+          expect(body).toHaveLength(2);
+          expect(body[0].rating).toBe(4.5);
+          expect(body[0].comments).toBe('Great food!');
+          expect(body[1].rating).toBe(3.5);
+          expect(body[1].comments).toBe('Good service');
+        });
+    });
+
+    it('should return empty array for restaurant with no reviews', async () => {
+      const restaurant = await restaurantRepository.save({
+        name: 'No Reviews Restaurant',
+        neighborhood: 'Manhattan',
+        cuisine_type: 'Italian',
+        address: '123 Main St',
+        lat: 40.7128,
+        lng: -74.006,
+      });
+
+      return request(app.getHttpServer() as Express)
+        .get(`/restaurants/${restaurant.id}/reviews`)
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as Review[];
+          expect(body).toHaveLength(0);
+        });
+    });
+
+    it('should return 404 for non-existent restaurant reviews', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/restaurants/999/reviews')
         .expect(404)
         .expect((res) => {
           const body = res.body as { message: string };
@@ -551,10 +622,6 @@ describe('Restaurants', () => {
         .expect(200)
         .expect((res) => {
           const body = res.body as RestaurantsListResponse;
-          console.log(
-            'Pagination test - Page 2:',
-            JSON.stringify(body, null, 2),
-          );
           expect(body.data).toHaveLength(1);
           expect(body.data[0].cuisine_type).toBe('Mexican');
           expect(body.data[0].name).toBe('Second Mexican');

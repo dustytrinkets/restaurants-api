@@ -76,5 +76,5 @@ export class Restaurant {
   cuisine_type: string;
 
   @OneToMany(() => Review, (review) => review.restaurant)
-  reviews: Review[];
+  reviews?: Review[];
 }

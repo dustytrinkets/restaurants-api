@@ -36,7 +36,7 @@ export class Review {
     example: 4.5,
     description: 'The review value (0-5)',
   })
-  @Column({ type: 'decimal', precision: 2, scale: 1 })
+  @Column({ type: 'integer', nullable: true })
   rating: number;
 
   @ApiProperty({
@@ -48,11 +48,12 @@ export class Review {
   comments: string;
 
   @ApiProperty({
-    example: '2025-10-17',
-    description: 'Date when the review was given',
+    example: 'October 26, 2016',
+    description: 'Date of the visit to the restaurant',
+    required: false,
   })
-  @Column({ type: 'date' })
-  date: Date;
+  @Column({ type: 'text', nullable: true })
+  date: string;
 
   @ApiProperty({
     example: '2025-10-17T15:30:00.000Z',
@@ -61,7 +62,6 @@ export class Review {
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date;
 
-  // Relationship
   @ManyToOne(() => Restaurant, (restaurant) => restaurant.reviews)
   @JoinColumn({ name: 'restaurant_id' })
   restaurant?: Restaurant;

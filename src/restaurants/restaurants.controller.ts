@@ -18,6 +18,8 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { RestaurantsService } from './restaurants.service';
+import { ReviewsService } from '../reviews/reviews.service';
+import { Review } from '../entities/review.entity';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { QueryRestaurantsDto } from './dto/query-restaurants.dto';
@@ -26,7 +28,10 @@ import { Restaurant } from '../entities/restaurant.entity';
 @ApiTags('restaurants')
 @Controller('restaurants')
 export class RestaurantsController {
-  constructor(private readonly restaurantsService: RestaurantsService) {}
+  constructor(
+    private readonly restaurantsService: RestaurantsService,
+    private readonly reviewsService: ReviewsService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new restaurant' })
@@ -89,16 +94,43 @@ export class RestaurantsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a restaurant by id' })
+  @ApiOperation({ summary: 'Get a restaurant by id with average rating' })
   @ApiParam({ name: 'id', description: 'Restaurant ID' })
   @ApiResponse({
     status: 200,
-    description: 'Return the restaurant.',
-    type: Restaurant,
+    description: 'Return the restaurant with average rating.',
+    schema: {
+      allOf: [
+        { $ref: '#/components/schemas/Restaurant' },
+        {
+          type: 'object',
+          properties: {
+            averageRating: {
+              type: 'number',
+              description: 'Average rating of the restaurant',
+              example: 4.5,
+            },
+          },
+        },
+      ],
+    },
   })
   @ApiResponse({ status: 404, description: 'Restaurant not found.' })
   findOne(@Param('id') id: string) {
     return this.restaurantsService.findOne(+id);
+  }
+
+  @Get(':id/reviews')
+  @ApiOperation({ summary: 'Get all reviews for a restaurant' })
+  @ApiParam({ name: 'id', description: 'Restaurant ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return all reviews for the restaurant.',
+    type: [Review],
+  })
+  @ApiResponse({ status: 404, description: 'Restaurant not found.' })
+  getReviews(@Param('id') id: string) {
+    return this.reviewsService.findByRestaurant(+id);
   }
 
   @Patch(':id')

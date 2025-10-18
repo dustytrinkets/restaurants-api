@@ -6,10 +6,10 @@ import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { QueryRestaurantsDto } from './dto/query-restaurants.dto';
 import {
-  calculateAverageRatings,
-  filterAndSortByRating,
+  addAverageRatingToQuery,
+  mapResultsWithAverageRating,
 } from './helpers/rating.helper';
-import { buildWhereConditions, buildOrderBy } from './helpers/query.helper';
+import { RestaurantWithRating } from './interfaces/restaurant-with-rating.interface';
 
 @Injectable()
 export class RestaurantsService {
@@ -24,7 +24,7 @@ export class RestaurantsService {
   }
 
   async findAll(queryDto: QueryRestaurantsDto): Promise<{
-    data: (Restaurant & { averageRating: number })[];
+    data: RestaurantWithRating[];
     total: number;
     page: number;
     limit: number;
@@ -39,44 +39,68 @@ export class RestaurantsService {
       sort = 'name',
       order = 'asc',
     } = queryDto;
+
     const skip = (page - 1) * limit;
 
-    const where = buildWhereConditions({ cuisine, neighborhood });
-    const orderBy = buildOrderBy(sort, order);
+    const queryBuilder = addAverageRatingToQuery(
+      this.restaurantsRepository.createQueryBuilder('restaurant'),
+    );
 
-    const [restaurants, totalCount] =
-      await this.restaurantsRepository.findAndCount({
-        where,
-        relations: ['reviews'],
-        order: orderBy,
-        skip,
-        take: limit,
+    if (cuisine)
+      queryBuilder.andWhere('restaurant.cuisine_type = :cuisine', { cuisine });
+    if (neighborhood)
+      queryBuilder.andWhere('restaurant.neighborhood = :neighborhood', {
+        neighborhood,
       });
+    if (rating !== undefined)
+      queryBuilder.having('AVG(review.rating) >= :rating', { rating });
 
-    const restaurantsWithRatings = calculateAverageRatings(restaurants);
+    const sortFields: Record<string, string> = {
+      rating: 'averageRating',
+      cuisine_type: 'restaurant.cuisine_type',
+      neighborhood: 'restaurant.neighborhood',
+      name: 'restaurant.name',
+    };
 
-    const needsRatingProcessing = rating !== undefined || sort === 'rating';
-    const filteredData = needsRatingProcessing
-      ? filterAndSortByRating(restaurantsWithRatings, { rating, sort, order })
-      : restaurantsWithRatings;
+    queryBuilder.addOrderBy(
+      sortFields[sort] || 'restaurant.id',
+      (order || 'ASC').toUpperCase() as 'ASC' | 'DESC',
+    );
+
+    queryBuilder.skip(skip).take(limit);
+
+    const [results, total] = await Promise.all([
+      queryBuilder.getRawAndEntities(),
+      queryBuilder.getCount(),
+    ]);
+
+    const data = mapResultsWithAverageRating(results.entities, results.raw);
 
     return {
-      data: filteredData,
-      total: totalCount,
+      data,
+      total,
       page,
       limit,
-      totalPages: Math.ceil(totalCount / limit),
+      totalPages: Math.ceil(total / limit),
     };
   }
 
-  async findOne(id: number): Promise<Restaurant> {
-    const restaurant = await this.restaurantsRepository.findOne({
-      where: { id },
-      relations: ['reviews'],
-    });
-    if (!restaurant) {
+  async findOne(id: number): Promise<RestaurantWithRating> {
+    const queryBuilder = addAverageRatingToQuery(
+      this.restaurantsRepository.createQueryBuilder('restaurant'),
+    ).where('restaurant.id = :id', { id });
+
+    const result = await queryBuilder.getRawAndEntities();
+
+    if (!result.entities.length) {
       throw new NotFoundException(`Restaurant with ID ${id} not found`);
     }
+
+    const [restaurant] = mapResultsWithAverageRating(
+      result.entities,
+      result.raw,
+    );
+
     return restaurant;
   }
 
