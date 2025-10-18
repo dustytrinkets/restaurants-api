@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { CacheModule } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RestaurantsModule } from './restaurants/restaurants.module';
@@ -14,7 +15,9 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { CustomRateLimitGuard } from './common/guards/custom-rate-limit.guard';
 import { getRateLimitConfig } from './common/config/rate-limit.factory';
 import { LoggingService } from './common/services/logging.service';
+import { CacheService } from './common/services/cache.service';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { cacheConfig } from './common/config/cache.config';
 
 @Module({
   imports: [
@@ -25,6 +28,7 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
       synchronize: false,
     }),
     ThrottlerModule.forRoot(getRateLimitConfig()),
+    CacheModule.register(cacheConfig),
     RestaurantsModule,
     ReviewsModule,
     FavoritesModule,
@@ -36,6 +40,7 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
   providers: [
     AppService,
     LoggingService,
+    CacheService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

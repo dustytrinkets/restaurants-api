@@ -39,8 +39,11 @@ You will need to think of some strategies to make your application scalable.
 Some pointers or ideas:
 
 - [X] Rate Limiting
-- [ ] Caching
-  - [ ] cache /restaurants results
+- [X] Caching
+  - [X] GET /restaurants results
+  - [X] GET /restaurants/:id
+  - [X] GET /restaurants/:id/reviews
+  - [X] GET /admin/stats (check)
 - [ ] Docker
 - [ ] Pagination enforced: never allow full-table queries.
 - [ ] Database indexing: ensure indexes on cuisine, rating, neighborhood.
@@ -70,3 +73,7 @@ Imagine that after some time our application has *100.000 users per week* and so
 - [ ] Async queue for heavy tasks (reviews analytics, stats aggregation).
 
 - [ ] Review README after finishing
+
+## Future steps
+
+- Implement redis

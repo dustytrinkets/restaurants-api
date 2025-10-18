@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Restaurant } from '../entities/restaurant.entity';
+import { Review } from '../entities/review.entity';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { QueryRestaurantsDto } from './dto/query-restaurants.dto';
@@ -11,13 +12,18 @@ import {
 } from './helpers/rating.helper';
 import { RestaurantWithRating } from './interfaces/restaurant-with-rating.interface';
 import { LoggingService } from '../common/services/logging.service';
+import { CacheService } from '../common/services/cache.service';
+import { CACHE_KEYS, CACHE_TTL } from '../common/constants/cache.constants';
 
 @Injectable()
 export class RestaurantsService {
   constructor(
     @InjectRepository(Restaurant)
     private restaurantsRepository: Repository<Restaurant>,
+    @InjectRepository(Review)
+    private reviewsRepository: Repository<Review>,
     private loggingService: LoggingService,
+    private cacheService: CacheService,
   ) {}
 
   async create(
@@ -27,6 +33,8 @@ export class RestaurantsService {
   ): Promise<Restaurant> {
     const restaurant = this.restaurantsRepository.create(createRestaurantDto);
     const savedRestaurant = await this.restaurantsRepository.save(restaurant);
+
+    await this.cacheService.del(CACHE_KEYS.ADMIN_STATS);
 
     if (userId) {
       this.loggingService.logMessage(
@@ -54,6 +62,23 @@ export class RestaurantsService {
       sort = 'name',
       order = 'asc',
     } = queryDto;
+
+    const cacheKey = this.cacheService.generateKey(
+      CACHE_KEYS.RESTAURANTS,
+      queryDto,
+    );
+
+    const cachedResult = await this.cacheService.get<{
+      data: RestaurantWithRating[];
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    }>(cacheKey);
+
+    if (cachedResult) {
+      return cachedResult;
+    }
 
     const skip = (page - 1) * limit;
 
@@ -91,16 +116,30 @@ export class RestaurantsService {
 
     const data = mapResultsWithAverageRating(results.entities, results.raw);
 
-    return {
+    const result = {
       data,
       total,
       page,
       limit,
       totalPages: Math.ceil(total / limit),
     };
+
+    await this.cacheService.set(cacheKey, result, CACHE_TTL.DEFAULT);
+
+    return result;
   }
 
   async findOne(id: number): Promise<RestaurantWithRating> {
+    const cacheKey = this.cacheService.generateKey(CACHE_KEYS.RESTAURANT, {
+      id,
+    });
+
+    const cachedResult =
+      await this.cacheService.get<RestaurantWithRating>(cacheKey);
+    if (cachedResult) {
+      return cachedResult;
+    }
+
     const queryBuilder = addAverageRatingToQuery(
       this.restaurantsRepository.createQueryBuilder('restaurant'),
     ).where('restaurant.id = :id', { id });
@@ -116,6 +155,8 @@ export class RestaurantsService {
       result.raw,
     );
 
+    await this.cacheService.set(cacheKey, restaurant, CACHE_TTL.LONG);
+
     return restaurant;
   }
 
@@ -129,6 +170,10 @@ export class RestaurantsService {
     Object.assign(restaurant, updateRestaurantDto);
     const updatedRestaurant = await this.restaurantsRepository.save(restaurant);
 
+    await this.cacheService.invalidateEntity(CACHE_KEYS.RESTAURANT, id);
+    await this.cacheService.invalidateEntityList(CACHE_KEYS.RESTAURANTS);
+    await this.cacheService.del(CACHE_KEYS.ADMIN_STATS);
+
     if (userId) {
       this.loggingService.logMessage(
         `Restaurant updated: ID ${id} by user ${userId} from IP: ${ip || 'unknown'}`,
@@ -140,8 +185,36 @@ export class RestaurantsService {
   }
 
   async remove(id: number, userId?: number, ip?: string): Promise<void> {
-    const restaurant = await this.findOne(id);
+    const restaurant = await this.restaurantsRepository.findOne({
+      where: { id },
+      relations: ['reviews'],
+    });
+
+    if (!restaurant) {
+      throw new NotFoundException(`Restaurant with ID ${id} not found`);
+    }
+
+    if (restaurant.reviews && restaurant.reviews.length > 0) {
+      await this.reviewsRepository
+        .createQueryBuilder()
+        .delete()
+        .from('reviews')
+        .where('restaurant_id = :id', { id })
+        .execute();
+    }
+
+    await this.restaurantsRepository
+      .createQueryBuilder()
+      .delete()
+      .from('favorites')
+      .where('restaurant_id = :id', { id })
+      .execute();
+
     await this.restaurantsRepository.remove(restaurant);
+
+    await this.cacheService.invalidateEntity(CACHE_KEYS.RESTAURANT, id);
+    await this.cacheService.invalidateEntityList(CACHE_KEYS.RESTAURANTS);
+    await this.cacheService.del(CACHE_KEYS.ADMIN_STATS);
 
     if (userId) {
       this.loggingService.logMessage(

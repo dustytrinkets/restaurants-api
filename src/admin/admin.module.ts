@@ -5,10 +5,11 @@ import { AdminService } from './admin.service';
 import { User } from '../entities/user.entity';
 import { Restaurant } from '../entities/restaurant.entity';
 import { Review } from '../entities/review.entity';
+import { CacheService } from '../common/services/cache.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Restaurant, Review])],
   controllers: [AdminController],
-  providers: [AdminService],
+  providers: [AdminService, CacheService],
 })
 export class AdminModule {}

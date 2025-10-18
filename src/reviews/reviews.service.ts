@@ -6,6 +6,8 @@ import { Restaurant } from '../entities/restaurant.entity';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { LoggingService } from '../common/services/logging.service';
+import { CacheService } from '../common/services/cache.service';
+import { CACHE_KEYS, CACHE_TTL } from '../common/constants/cache.constants';
 
 @Injectable()
 export class ReviewsService {
@@ -15,9 +17,22 @@ export class ReviewsService {
     @InjectRepository(Restaurant)
     private restaurantsRepository: Repository<Restaurant>,
     private loggingService: LoggingService,
+    private cacheService: CacheService,
   ) {}
 
   async findByRestaurant(restaurantId: number): Promise<Review[]> {
+    const cacheKey = this.cacheService.generateKey(
+      CACHE_KEYS.RESTAURANT_REVIEWS,
+      {
+        restaurantId,
+      },
+    );
+
+    const cachedResult = await this.cacheService.get<Review[]>(cacheKey);
+    if (cachedResult) {
+      return cachedResult;
+    }
+
     const restaurant = await this.restaurantsRepository.findOne({
       where: { id: restaurantId },
     });
@@ -27,10 +42,14 @@ export class ReviewsService {
       );
     }
 
-    return await this.reviewsRepository.find({
+    const reviews = await this.reviewsRepository.find({
       where: { restaurant_id: restaurantId },
       order: { created_at: 'DESC' },
     });
+
+    await this.cacheService.set(cacheKey, reviews, CACHE_TTL.DEFAULT);
+
+    return reviews;
   }
 
   async create(
@@ -55,6 +74,12 @@ export class ReviewsService {
     });
 
     const savedReview = await this.reviewsRepository.save(review);
+
+    await this.cacheService.invalidateEntity(
+      CACHE_KEYS.RESTAURANT_REVIEWS,
+      restaurantId,
+    );
+    await this.cacheService.del(CACHE_KEYS.ADMIN_STATS);
 
     this.loggingService.logMessage(
       `Review created: ID ${savedReview.id} for restaurant ${restaurantId} by user ${userId} from IP: ${ip || 'unknown'}`,
@@ -94,6 +119,11 @@ export class ReviewsService {
     Object.assign(review, updateReviewDto);
     const updatedReview = await this.reviewsRepository.save(review);
 
+    await this.cacheService.invalidateEntity(
+      CACHE_KEYS.RESTAURANT_REVIEWS,
+      review.restaurant_id,
+    );
+
     this.loggingService.logMessage(
       `Review updated: ID ${reviewId} by user ${userId} from IP: ${ip || 'unknown'}`,
       'REVIEW',
@@ -104,7 +134,14 @@ export class ReviewsService {
 
   async remove(reviewId: number, userId: number, ip?: string): Promise<void> {
     const review = await this.findOneByUser(reviewId, userId);
+    const restaurantId = review.restaurant_id;
     await this.reviewsRepository.remove(review);
+
+    await this.cacheService.invalidateEntity(
+      CACHE_KEYS.RESTAURANT_REVIEWS,
+      restaurantId,
+    );
+    await this.cacheService.del(CACHE_KEYS.ADMIN_STATS);
 
     this.loggingService.logMessage(
       `Review deleted: ID ${reviewId} by user ${userId} from IP: ${ip || 'unknown'}`,

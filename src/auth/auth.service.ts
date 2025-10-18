@@ -13,6 +13,8 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { LoggingService } from '../common/services/logging.service';
+import { CacheService } from '../common/services/cache.service';
+import { CACHE_KEYS } from '../common/constants/cache.constants';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +23,7 @@ export class AuthService {
     private usersRepository: Repository<User>,
     private jwtService: JwtService,
     private loggingService: LoggingService,
+    private cacheService: CacheService,
   ) {}
   async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
     const { email, password, name, role = UserRole.USER } = registerDto;
@@ -51,6 +54,8 @@ export class AuthService {
       role: savedUser.role,
     };
     const access_token = this.jwtService.sign(payload);
+
+    await this.cacheService.del(CACHE_KEYS.ADMIN_STATS);
 
     this.loggingService.logMessage(
       `User registration: ${savedUser.email} (ID: ${savedUser.id}) from IP: unknown`,

@@ -33,7 +33,7 @@ export class AuthController {
 
   @Post('login')
   @Public()
-  @Throttle({ default: { limit: 5, ttl: 60000 } }) // 5 req/min per IP
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login user' })
   @ApiResponse({

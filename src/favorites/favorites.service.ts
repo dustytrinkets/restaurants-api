@@ -8,6 +8,8 @@ import { Repository } from 'typeorm';
 import { Favorite } from '../entities/favorite.entity';
 import { Restaurant } from '../entities/restaurant.entity';
 import { LoggingService } from '../common/services/logging.service';
+import { CacheService } from '../common/services/cache.service';
+import { CACHE_KEYS } from '../common/constants/cache.constants';
 
 @Injectable()
 export class FavoritesService {
@@ -17,6 +19,7 @@ export class FavoritesService {
     @InjectRepository(Restaurant)
     private restaurantsRepository: Repository<Restaurant>,
     private loggingService: LoggingService,
+    private cacheService: CacheService,
   ) {}
 
   async addToFavorites(
@@ -47,6 +50,8 @@ export class FavoritesService {
 
     const savedFavorite = await this.favoritesRepository.save(favorite);
 
+    await this.cacheService.del(CACHE_KEYS.ADMIN_STATS);
+
     this.loggingService.logMessage(
       `Favorite added: Restaurant ${restaurantId} by user ${userId} from IP: ${ip || 'unknown'}`,
       'FAVORITE',
@@ -68,6 +73,8 @@ export class FavoritesService {
     }
 
     await this.favoritesRepository.remove(favorite);
+
+    await this.cacheService.del(CACHE_KEYS.ADMIN_STATS);
 
     this.loggingService.logMessage(
       `Favorite removed: Restaurant ${restaurantId} by user ${userId} from IP: ${ip || 'unknown'}`,

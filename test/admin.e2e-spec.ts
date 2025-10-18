@@ -8,16 +8,19 @@ import { AppModule } from '../src/app.module';
 import { Restaurant } from '../src/entities/restaurant.entity';
 import { Review } from '../src/entities/review.entity';
 import { User } from '../src/entities/user.entity';
+import { Favorite } from '../src/entities/favorite.entity';
 import { Express } from 'express';
 import { UserRole } from '../src/common/enums/user-role.enum';
 import { AuthResponseDto } from '../src/auth/dto/auth-response.dto';
 import { StatsDto } from '../src/admin/dto/stats.dto';
+import { CacheService } from '../src/common/services/cache.service';
 
 describe('Admin (e2e)', () => {
   let app: INestApplication;
   let restaurantRepository: Repository<Restaurant>;
   let reviewRepository: Repository<Review>;
   let userRepository: Repository<User>;
+  let cacheService: CacheService;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -25,7 +28,7 @@ describe('Admin (e2e)', () => {
         TypeOrmModule.forRoot({
           type: 'sqlite',
           database: ':memory:',
-          entities: [Restaurant, Review, User],
+          entities: [Restaurant, Review, User, Favorite],
           synchronize: true,
         }),
         AppModule,
@@ -44,6 +47,7 @@ describe('Admin (e2e)', () => {
     restaurantRepository = moduleFixture.get('RestaurantRepository');
     reviewRepository = moduleFixture.get('ReviewRepository');
     userRepository = moduleFixture.get('UserRepository');
+    cacheService = moduleFixture.get<CacheService>(CacheService);
 
     await app.init();
   });
@@ -52,6 +56,10 @@ describe('Admin (e2e)', () => {
     await reviewRepository.clear();
     await restaurantRepository.clear();
     await userRepository.clear();
+
+    await cacheService.del('admin-stats');
+    await cacheService.del('restaurants');
+    await cacheService.del('restaurant-reviews');
 
     const restaurants = await restaurantRepository.save([
       {
@@ -264,13 +272,15 @@ describe('Admin (e2e)', () => {
       const initialStats = initialResponse.body as StatsDto;
       const initialUserCount = initialStats.totalUsers;
 
-      await userRepository.save({
-        email: 'newuser@example.com',
-        password: 'password123',
-        name: 'New User',
-        role: UserRole.USER,
-        created_at: new Date().toISOString(),
-      });
+      await request(app.getHttpServer() as Express)
+        .post('/auth/register')
+        .send({
+          email: 'newuser@example.com',
+          password: 'password123',
+          name: 'New User',
+          role: UserRole.USER,
+        })
+        .expect(201);
 
       const updatedResponse = await request(app.getHttpServer() as Express)
         .get('/admin/stats')
@@ -308,9 +318,10 @@ describe('Admin (e2e)', () => {
       if (restaurants.length > 0) {
         const restaurantToDelete = restaurants[0];
 
-        await reviewRepository.delete({ restaurant_id: restaurantToDelete.id });
-
-        await restaurantRepository.remove(restaurantToDelete);
+        await request(app.getHttpServer() as Express)
+          .delete(`/restaurants/${restaurantToDelete.id}`)
+          .set('Authorization', `Bearer ${adminToken}`)
+          .expect(204);
       }
 
       const updatedResponse = await request(app.getHttpServer() as Express)

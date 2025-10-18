@@ -5,7 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { Express } from 'express';
 import { Repository } from 'typeorm';
-import { AuthModule } from '../src/auth/auth.module';
+import { AppModule } from '../src/app.module';
 import { User } from '../src/entities/user.entity';
 import { UserRole } from '../src/common/enums/user-role.enum';
 import { AuthResponseDto } from '../src/auth/dto/auth-response.dto';
@@ -23,7 +23,7 @@ describe('Auth (e2e)', () => {
           entities: [User],
           synchronize: true,
         }),
-        AuthModule,
+        AppModule,
       ],
     }).compile();
 
