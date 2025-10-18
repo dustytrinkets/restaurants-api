@@ -28,7 +28,7 @@ jobs:
     - name: Run e2e tests
       run: npm run test:e2e
       env:
-        DATABASE_URL=sqlite:///tmp/test.db
+        DATABASE_URL: sqlite:///tmp/test.db
         
     - name: Build application
       run: npm run build
@@ -36,7 +36,7 @@ jobs:
     - name: Run migrations
       run: npm run migration:run
       env:
-        DATABASE_URL=sqlite:///tmp/restaurants.db
+        DATABASE_URL: sqlite:///tmp/restaurants.db
         
     - name: Deploy to your platform
       run: |
