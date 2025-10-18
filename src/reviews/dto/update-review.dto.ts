@@ -1,20 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsString, IsOptional, Min, Max } from 'class-validator';
 
-export class CreateReviewDto {
+export class UpdateReviewDto {
   @ApiProperty({
     example: 4,
     description: 'The review rating (1-5)',
     minimum: 1,
     maximum: 5,
+    required: false,
   })
+  @IsOptional()
   @IsInt()
   @Min(1)
   @Max(5)
-  rating: number;
+  rating?: number;
 
   @ApiProperty({
-    example: 'Great food and service!',
+    example: 'Updated comment about the restaurant',
     description: 'User comment about the restaurant',
     required: false,
   })

@@ -33,8 +33,8 @@ export class Review {
   user_id: number;
 
   @ApiProperty({
-    example: 4.5,
-    description: 'The review value (0-5)',
+    example: 4,
+    description: 'The review value (1-5)',
   })
   @Column({ type: 'integer', nullable: true })
   rating: number;

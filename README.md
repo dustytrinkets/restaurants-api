@@ -12,10 +12,10 @@
 
 ### Authenticated endpoints (roles: USER or ADMIN):
 - [x] `GET /me`: Information about the authenticated user.
-- [ ] `GET /me/reviews`: Reviews created by the authenticated user.
-- [ ] `POST /restaurants/:id/reviews`: Create a review.
-- [ ] `PUT /me/reviews/:id`: Edit a review.
-- [ ] `DELETE /me/reviews/:id`: Delete a review.
+- [X] `GET /me/reviews`: Reviews created by the authenticated user.
+- [X] `POST /restaurants/:id/reviews`: Create a review.
+- [X] `PUT /me/reviews/:id`: Edit a review.
+- [X] `DELETE /me/reviews/:id`: Delete a review.
 - [ ] `POST /me/favorites/:restaurantId`: Add a restaurant to favorites.
 - [ ] `DELETE /me/favorites/:restaurantId`: Delete a restaurant from favorites.
 - [ ] `GET /me/favorites`: See the list of favorites.
