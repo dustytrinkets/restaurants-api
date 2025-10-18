@@ -9,13 +9,16 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { Public } from '../auth/decorators/public.decorator';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiParam,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { RestaurantsService } from './restaurants.service';
 import { ReviewsService } from '../reviews/reviews.service';
@@ -24,9 +27,13 @@ import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { QueryRestaurantsDto } from './dto/query-restaurants.dto';
 import { Restaurant } from '../entities/restaurant.entity';
+import { UserRole } from '../common/enums/user-role.enum';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../common/guards/roles.guard';
 
 @ApiTags('restaurants')
 @Controller('restaurants')
+@UseGuards(RolesGuard)
 export class RestaurantsController {
   constructor(
     private readonly restaurantsService: RestaurantsService,
@@ -34,6 +41,8 @@ export class RestaurantsController {
   ) {}
 
   @Post()
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new restaurant' })
   @ApiResponse({
     status: 201,
@@ -46,6 +55,7 @@ export class RestaurantsController {
   }
 
   @Get()
+  @Public()
   @ApiOperation({
     summary: 'Get restaurants with pagination, filtering, and sorting',
   })
@@ -94,6 +104,7 @@ export class RestaurantsController {
   }
 
   @Get(':id')
+  @Public()
   @ApiOperation({ summary: 'Get a restaurant by id with average rating' })
   @ApiParam({ name: 'id', description: 'Restaurant ID' })
   @ApiResponse({
@@ -121,6 +132,7 @@ export class RestaurantsController {
   }
 
   @Get(':id/reviews')
+  @Public()
   @ApiOperation({ summary: 'Get all reviews for a restaurant' })
   @ApiParam({ name: 'id', description: 'Restaurant ID' })
   @ApiResponse({
@@ -134,6 +146,8 @@ export class RestaurantsController {
   }
 
   @Patch(':id')
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a restaurant' })
   @ApiParam({ name: 'id', description: 'Restaurant ID' })
   @ApiResponse({
@@ -150,6 +164,8 @@ export class RestaurantsController {
   }
 
   @Delete(':id')
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a restaurant' })
   @ApiParam({ name: 'id', description: 'Restaurant ID' })

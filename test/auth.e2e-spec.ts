@@ -7,7 +7,7 @@ import { Express } from 'express';
 import { Repository } from 'typeorm';
 import { AuthModule } from '../src/auth/auth.module';
 import { User } from '../src/entities/user.entity';
-import { UserRole } from '../src/entities/user.entity';
+import { UserRole } from '../src/common/enums/user-role.enum';
 import { AuthResponseDto } from '../src/auth/dto/auth-response.dto';
 
 describe('Auth (e2e)', () => {

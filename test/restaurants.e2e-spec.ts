@@ -7,7 +7,10 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { Restaurant } from '../src/entities/restaurant.entity';
 import { Review } from '../src/entities/review.entity';
+import { User } from '../src/entities/user.entity';
 import { Express } from 'express';
+import { UserRole } from '../src/common/enums/user-role.enum';
+import { AuthResponseDto } from '../src/auth/dto/auth-response.dto';
 
 interface RestaurantWithRating extends Restaurant {
   averageRating?: number;
@@ -21,10 +24,12 @@ interface RestaurantsListResponse {
   totalPages: number;
 }
 
-describe('Restaurants', () => {
+describe('Restaurants (e2e)', () => {
   let app: INestApplication;
   let restaurantRepository: Repository<Restaurant>;
   let reviewRepository: Repository<Review>;
+  let userRepository: Repository<User>;
+  let adminToken: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -32,7 +37,7 @@ describe('Restaurants', () => {
         TypeOrmModule.forRoot({
           type: 'sqlite',
           database: ':memory:',
-          entities: [Restaurant, Review],
+          entities: [Restaurant, Review, User],
           synchronize: true,
         }),
         AppModule,
@@ -50,6 +55,7 @@ describe('Restaurants', () => {
 
     restaurantRepository = moduleFixture.get('RestaurantRepository');
     reviewRepository = moduleFixture.get('ReviewRepository');
+    userRepository = moduleFixture.get('UserRepository');
 
     await app.init();
   });
@@ -57,6 +63,21 @@ describe('Restaurants', () => {
   beforeEach(async () => {
     await reviewRepository.clear();
     await restaurantRepository.clear();
+    await userRepository.clear();
+
+    const adminData = {
+      email: 'admin@example.com',
+      password: 'password123',
+      name: 'Admin User',
+      role: UserRole.ADMIN,
+    };
+
+    const response = await request(app.getHttpServer() as Express)
+      .post('/auth/register')
+      .send(adminData)
+      .expect(201);
+
+    adminToken = (response.body as AuthResponseDto).access_token;
   });
 
   afterAll(async () => {
@@ -64,7 +85,31 @@ describe('Restaurants', () => {
   });
 
   describe('POST /restaurants', () => {
-    it('should create a restaurant', () => {
+    it('should create a restaurant', async () => {
+      const createRestaurantDto = {
+        name: 'Test Restaurant',
+        neighborhood: 'Manhattan',
+        cuisine_type: 'Italian',
+        address: '123 Main St',
+        lat: 40.7128,
+        lng: -74.006,
+      };
+
+      return request(app.getHttpServer() as Express)
+        .post('/restaurants')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send(createRestaurantDto)
+        .expect(201)
+        .expect((res) => {
+          const body = res.body as RestaurantWithRating;
+          expect(body.name).toBe(createRestaurantDto.name);
+          expect(body.neighborhood).toBe(createRestaurantDto.neighborhood);
+          expect(body.cuisine_type).toBe(createRestaurantDto.cuisine_type);
+          expect(body.id).toBeDefined();
+        });
+    });
+
+    it('should fail without admin token', async () => {
       const createRestaurantDto = {
         name: 'Test Restaurant',
         neighborhood: 'Manhattan',
@@ -77,17 +122,10 @@ describe('Restaurants', () => {
       return request(app.getHttpServer() as Express)
         .post('/restaurants')
         .send(createRestaurantDto)
-        .expect(201)
-        .expect((res) => {
-          const body = res.body as RestaurantWithRating;
-          expect(body.name).toBe(createRestaurantDto.name);
-          expect(body.neighborhood).toBe(createRestaurantDto.neighborhood);
-          expect(body.cuisine_type).toBe(createRestaurantDto.cuisine_type);
-          expect(body.id).toBeDefined();
-        });
+        .expect(401);
     });
 
-    it('should fail with invalid data', () => {
+    it('should fail with invalid data', async () => {
       const invalidDto = {
         name: '',
         lat: 91,
@@ -96,17 +134,19 @@ describe('Restaurants', () => {
 
       return request(app.getHttpServer() as Express)
         .post('/restaurants')
+        .set('Authorization', `Bearer ${adminToken}`)
         .send(invalidDto)
         .expect(400);
     });
 
-    it('should fail without required fields', () => {
+    it('should fail without required fields', async () => {
       const incompleteDto = {
         neighborhood: 'Manhattan',
       };
 
       return request(app.getHttpServer() as Express)
         .post('/restaurants')
+        .set('Authorization', `Bearer ${adminToken}`)
         .send(incompleteDto)
         .expect(400);
     });
@@ -446,7 +486,7 @@ describe('Restaurants', () => {
       });
     });
 
-    it('should update a restaurant', () => {
+    it('should update a restaurant', async () => {
       const updateDto = {
         name: 'Updated Restaurant',
         cuisine_type: 'French',
@@ -454,6 +494,7 @@ describe('Restaurants', () => {
 
       return request(app.getHttpServer() as Express)
         .patch(`/restaurants/${restaurant.id}`)
+        .set('Authorization', `Bearer ${adminToken}`)
         .send(updateDto)
         .expect(200)
         .expect((res) => {
@@ -464,20 +505,22 @@ describe('Restaurants', () => {
         });
     });
 
-    it('should fail with invalid data', () => {
+    it('should fail with invalid data', async () => {
       const invalidDto = {
         lat: 91,
       };
 
       return request(app.getHttpServer() as Express)
         .patch(`/restaurants/${restaurant.id}`)
+        .set('Authorization', `Bearer ${adminToken}`)
         .send(invalidDto)
         .expect(400);
     });
 
-    it('should return 404 for non-existent restaurant', () => {
+    it('should return 404 for non-existent restaurant', async () => {
       return request(app.getHttpServer() as Express)
         .patch('/restaurants/999')
+        .set('Authorization', `Bearer ${adminToken}`)
         .send({ name: 'Updated' })
         .expect(404)
         .expect((res) => {
@@ -501,15 +544,17 @@ describe('Restaurants', () => {
       });
     });
 
-    it('should delete a restaurant', () => {
+    it('should delete a restaurant', async () => {
       return request(app.getHttpServer() as Express)
         .delete(`/restaurants/${restaurant.id}`)
+        .set('Authorization', `Bearer ${adminToken}`)
         .expect(204);
     });
 
-    it('should return 404 for non-existent restaurant', () => {
+    it('should return 404 for non-existent restaurant', async () => {
       return request(app.getHttpServer() as Express)
         .delete('/restaurants/999')
+        .set('Authorization', `Bearer ${adminToken}`)
         .expect(404)
         .expect((res) => {
           const body = res.body as { message: string };

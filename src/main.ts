@@ -8,7 +8,10 @@ function setupSwagger(app: INestApplication) {
     .setTitle('Restaurants API')
     .setDescription('The restaurants API documentation')
     .setVersion('1.0')
+    .addBearerAuth()
+    .addTag('auth', 'Authentication endpoints')
     .addTag('restaurants', 'Restaurant management endpoints')
+    .addTag('users', 'User management endpoints')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
