@@ -1,15 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ValidationPipe } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import request from 'supertest';
 import { Express } from 'express';
-import { AppModule } from '../src/app.module';
+import { TestAppModule } from './test-app.module';
 import { Restaurant } from '../src/entities/restaurant.entity';
 import { Favorite } from '../src/entities/favorite.entity';
 import { User } from '../src/entities/user.entity';
-import { Review } from '../src/entities/review.entity';
 import { UserRole } from '../src/common/enums/user-role.enum';
 import { AuthResponseDto } from '../src/auth/dto/auth-response.dto';
 
@@ -21,15 +19,7 @@ describe.only('Favorites (e2e)', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot({
-          type: 'sqlite',
-          database: ':memory:',
-          entities: [Restaurant, Favorite, User, Review],
-          synchronize: true,
-        }),
-        AppModule,
-      ],
+      imports: [TestAppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -311,7 +301,10 @@ describe.only('Favorites (e2e)', () => {
       expect(Array.isArray(body)).toBe(true);
       expect(body.length).toBe(2);
       expect(body[0]).toHaveProperty('restaurant');
-      expect(body[0].restaurant?.name).toBe('Restaurant One');
+      expect(body[1]).toHaveProperty('restaurant');
+      const restaurantNames = body.map((fav) => fav.restaurant?.name);
+      expect(restaurantNames).toContain('Restaurant One');
+      expect(restaurantNames).toContain('Restaurant Two');
     });
 
     it('should work for admin users', async () => {

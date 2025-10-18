@@ -1,14 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ValidationPipe } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import request from 'supertest';
-import { AppModule } from '../src/app.module';
+import { TestAppModule } from './test-app.module';
 import { Restaurant } from '../src/entities/restaurant.entity';
 import { Review } from '../src/entities/review.entity';
 import { User } from '../src/entities/user.entity';
-import { Favorite } from '../src/entities/favorite.entity';
 import { Express } from 'express';
 import { UserRole } from '../src/common/enums/user-role.enum';
 import { AuthResponseDto } from '../src/auth/dto/auth-response.dto';
@@ -24,15 +22,7 @@ describe('Admin (e2e)', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot({
-          type: 'sqlite',
-          database: ':memory:',
-          entities: [Restaurant, Review, User, Favorite],
-          synchronize: true,
-        }),
-        AppModule,
-      ],
+      imports: [TestAppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
