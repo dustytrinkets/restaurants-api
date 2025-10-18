@@ -45,8 +45,7 @@ Some pointers or ideas:
   - [X] GET /restaurants/:id/reviews
   - [X] GET /admin/stats (check)
 - [ ] Docker
-- [ ] Pagination enforced: never allow full-table queries.
-- [ ] Database indexing: ensure indexes on cuisine, rating, neighborhood.
+- [X] Database indexing: ensure indexes on cuisine, rating, neighborhood.
 
 
 ### Architecture diagram
@@ -69,11 +68,9 @@ Imagine that after some time our application has *100.000 users per week* and so
 ## TODO:
 - [X] Logs
 - [X] Connection pooling for DB --> not possible on sqlite
-- [ ] Health checks and monitoring (Prometheus, Grafana, etc).
-- [ ] Async queue for heavy tasks (reviews analytics, stats aggregation).
-
 - [ ] Review README after finishing
 
 ## Future steps
-
-- Implement redis
+- [ ] Health checks and monitoring (Prometheus, Grafana, etc).
+- [ ] Async queue for heavy tasks (reviews analytics, stats aggregation).
+- [ ] Implement redis
