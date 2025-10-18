@@ -84,10 +84,10 @@ export class MigrationService {
   private async ensureMigrationsTable(): Promise<void> {
     const createTableSQL = `
       CREATE TABLE IF NOT EXISTS migrations (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL UNIQUE,
-        executed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        checksum TEXT
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL UNIQUE,
+        executed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        checksum VARCHAR(255)
       );
     `;
 

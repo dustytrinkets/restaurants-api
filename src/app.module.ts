@@ -23,10 +23,14 @@ import { MigrationModule } from './common/modules/migration.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'restaurants.db',
+      type: 'postgres',
+      url: process.env.DATABASE_URL,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: false,
+      ssl:
+        process.env.NODE_ENV === 'production'
+          ? { rejectUnauthorized: false }
+          : false,
     }),
     ThrottlerModule.forRoot(getRateLimitConfig()),
     CacheModule.register(cacheConfig),
