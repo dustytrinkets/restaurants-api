@@ -24,7 +24,7 @@
 - [X] `POST /restaurants`: Create a restaurant.
 - [X] `PUT /restaurants/:id`: Edit a restaurant.
 - [X] `DELETE /restaurants/:id`: Delete a restaurant.
-- [ ] `GET /admin/stats`: See statistics of: number of users, reviews, restaurants.
+- [X] `GET /admin/stats`: See statistics of: number of users, reviews, restaurants.
 
 ### Middlewares    
 
