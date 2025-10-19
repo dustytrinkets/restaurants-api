@@ -21,11 +21,11 @@ function setupSwagger(app: INestApplication) {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Run migrations on startup in production
-  if (process.env.NODE_ENV === 'production') {
-    const migrationService = app.get(MigrationService);
-    await migrationService.runMigrations();
-  }
+  // TODO: add step to run migrations on CI on production
+  // if (process.env.NODE_ENV !== 'production') {
+  const migrationService = app.get(MigrationService);
+  await migrationService.runMigrations();
+  // }
 
   app.useGlobalPipes(
     new ValidationPipe({

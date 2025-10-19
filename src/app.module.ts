@@ -28,7 +28,7 @@ import { MigrationModule } from './common/modules/migration.module';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      url: process.env.DATABASE_URL || 'postgresql://localhost/restaurants_dev',
+      url: process.env.DATABASE_URL,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: false,
       ssl:
