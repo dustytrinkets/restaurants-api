@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # Application service for local development
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    container_name: restaurants-api-local
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/restaurants_dev
+      - JWT_SECRET=dev-jwt-secret
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - restaurants-network
+    command: ["npm", "run", "start:dev"]
+
+  # PostgreSQL database for local development
+  postgres:
+    image: postgres:15-alpine
+    container_name: restaurants-postgres-local
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: restaurants_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - restaurants-network
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: restaurants-redis-local
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - restaurants-network
+
+  # Database admin interface
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: restaurants-pgadmin-local
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@restaurants.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8081:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - restaurants-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  restaurants-network:
+    driver: bridge

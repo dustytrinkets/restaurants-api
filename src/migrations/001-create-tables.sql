@@ -11,33 +11,35 @@ CREATE TABLE IF NOT EXISTS users (
 -- Create restaurants table
 CREATE TABLE IF NOT EXISTS restaurants (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  cuisine_type VARCHAR(100) NOT NULL,
-  address TEXT NOT NULL,
-  neighborhood VARCHAR(100) NOT NULL,
-  price_range VARCHAR(50),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  name TEXT NOT NULL,
+  neighborhood TEXT,
+  photograph TEXT,
+  address TEXT,
+  lat REAL,
+  lng REAL,
+  image TEXT,
+  cuisine_type TEXT
 );
 
 -- Create reviews table
 CREATE TABLE IF NOT EXISTS reviews (
   id SERIAL PRIMARY KEY,
-  restaurant_id INTEGER NOT NULL,
-  user_id INTEGER NOT NULL,
-  rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
-  comment TEXT,
+  restaurant_id INTEGER,
+  user_id INTEGER,
+  rating INTEGER,
+  comments TEXT,
+  date TIMESTAMP,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (restaurant_id) REFERENCES restaurants(id) ON DELETE CASCADE,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  FOREIGN KEY (restaurant_id) REFERENCES restaurants(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 -- Create favorites table
 CREATE TABLE IF NOT EXISTS favorites (
-  id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL,
   restaurant_id INTEGER NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE (user_id, restaurant_id),
+  PRIMARY KEY (user_id, restaurant_id),
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (restaurant_id) REFERENCES restaurants(id) ON DELETE CASCADE
 );
@@ -45,9 +47,8 @@ CREATE TABLE IF NOT EXISTS favorites (
 -- Create operating_hours table
 CREATE TABLE IF NOT EXISTS operating_hours (
   id SERIAL PRIMARY KEY,
-  restaurant_id INTEGER NOT NULL,
-  day_of_week VARCHAR(20) NOT NULL,
-  open_time VARCHAR(10) NOT NULL,
-  close_time VARCHAR(10) NOT NULL,
-  FOREIGN KEY (restaurant_id) REFERENCES restaurants(id) ON DELETE CASCADE
+  restaurant_id INTEGER,
+  day TEXT,
+  hours TEXT,
+  FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)
 );
