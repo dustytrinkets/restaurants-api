@@ -69,7 +69,7 @@ Imagine that after some time our application has *100.000 users per week* and so
 ## TODO:
 
 - [X] Logs
-- [X] Connection pooling for DB --> not possible on sqlite
+- [ ] Connection pooling for DB
 - [ ] Review README after finishing
 
 ## Future steps
@@ -77,3 +77,4 @@ Imagine that after some time our application has *100.000 users per week* and so
 - [ ] Health checks and monitoring (Prometheus, Grafana, etc).
 - [ ] Async queue for heavy tasks (reviews analytics, stats aggregation).
 - [ ] Implement redis
+- [ ] Add step to run migrations on CI on production
