@@ -153,7 +153,7 @@ export class MigrationService {
 
       // Record the migration as executed
       await this.dataSource.query(
-        'INSERT INTO migrations (name, checksum) VALUES (?, ?)',
+        'INSERT INTO migrations (name, checksum) VALUES ($1, $2)',
         [migration.name, migration.checksum],
       );
 
