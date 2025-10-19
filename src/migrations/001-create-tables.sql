@@ -1,8 +1,3 @@
--- Migration: Create all necessary tables for PostgreSQL
--- Purpose: Initializes the database schema for the Restaurants API.
--- Date: 2025-10-18
--- Author: Assistant
-
 -- Create users table
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
@@ -47,7 +42,7 @@ CREATE TABLE IF NOT EXISTS favorites (
   FOREIGN KEY (restaurant_id) REFERENCES restaurants(id) ON DELETE CASCADE
 );
 
--- Create operating_hours table (example, if needed)
+-- Create operating_hours table
 CREATE TABLE IF NOT EXISTS operating_hours (
   id SERIAL PRIMARY KEY,
   restaurant_id INTEGER NOT NULL,
