@@ -7,7 +7,7 @@ const path = require('path');
 
 // Configuration
 const SQLITE_DB = './data/restaurants.db';
-const RAILWAY_URL = 'postgresql://postgres:cOtahPeunZyrGnpYeZktQdCPirIoWrTt@metro.proxy.rlwy.net:16763/railway';
+const RAILWAY_URL = process.env.DATABASE_URL;
 
 if (!RAILWAY_URL) {
   console.error('❌ DATABASE_URL environment variable not set');
