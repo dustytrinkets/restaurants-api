@@ -1,0 +1,104 @@
+<mxfile host="65bd71144e">
+    <diagram name="Backend Modules and Middlewares" id="backend-modules-middlewares">
+        <mxGraphModel dx="885" dy="860" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" background="none" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="37" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2C2F33;strokeColor=#6c8ebf;fontSize=12;fontColor=#f5f5f5;" parent="1" vertex="1">
+                    <mxGeometry x="343" y="180" width="687" height="598" as="geometry"/>
+                </mxCell>
+                <mxCell id="67" style="edgeStyle=none;html=1;entryX=-0.025;entryY=0.841;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="28">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="852.5" y="550" as="sourcePoint"/>
+                        <mxPoint x="1140" y="550" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="59" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#252627;strokeColor=#6c8ebf;fontSize=12;fontColor=#0d0c0c;" parent="1" vertex="1">
+                    <mxGeometry x="630.5" y="240" width="220" height="520" as="geometry"/>
+                </mxCell>
+                <mxCell id="65" value="" style="edgeStyle=none;html=1;fontColor=#f5f5f5;entryX=0.003;entryY=0.343;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="53" target="59" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="53" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#252627;strokeColor=#6c8ebf;fontSize=12;fontColor=#0d0c0c;" parent="1" vertex="1">
+                    <mxGeometry x="363" y="288" width="220" height="262" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Throttler Middleware" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;fontColor=#0d0c0c;" parent="1" vertex="1">
+                    <mxGeometry x="383" y="338" width="180" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Auth Middleware (JWT)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;fontColor=#0d0c0c;" parent="1" vertex="1">
+                    <mxGeometry x="383" y="408" width="180" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Roles Middleware &lt;br&gt;(USER / ADMIN)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontColor=#0d0c0c;" parent="1" vertex="1">
+                    <mxGeometry x="383" y="478" width="180" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Auth Module" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontColor=#0d0c0c;" parent="1" vertex="1">
+                    <mxGeometry x="650.5" y="278" width="180" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Users Module" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontColor=#0d0c0c;" parent="1" vertex="1">
+                    <mxGeometry x="650.5" y="358" width="180" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="Restaurants Module" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontColor=#0d0c0c;" parent="1" vertex="1">
+                    <mxGeometry x="650.5" y="438" width="180" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Reviews Module" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontColor=#0d0c0c;" parent="1" vertex="1">
+                    <mxGeometry x="650.5" y="518" width="180" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Favorites Module" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontColor=#0d0c0c;" parent="1" vertex="1">
+                    <mxGeometry x="650.5" y="598" width="180" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;" parent="1" target="3" edge="1"/>
+                <mxCell id="14" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;" parent="1" source="3" target="4" edge="1"/>
+                <mxCell id="15" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;" parent="1" source="4" target="5" edge="1"/>
+                <mxCell id="16" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;" parent="1" source="5" target="6" edge="1"/>
+                <mxCell id="17" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;" parent="1" source="5" target="7" edge="1"/>
+                <mxCell id="18" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;" parent="1" source="5" target="8" edge="1"/>
+                <mxCell id="19" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;" parent="1" source="5" target="9" edge="1"/>
+                <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;" parent="1" source="5" target="10" edge="1"/>
+                <mxCell id="21" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;" parent="1" source="6" edge="1"/>
+                <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;" parent="1" source="7" edge="1"/>
+                <mxCell id="23" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;" parent="1" source="8" edge="1"/>
+                <mxCell id="24" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;" parent="1" source="9" edge="1"/>
+                <mxCell id="25" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;" parent="1" source="10" edge="1"/>
+                <mxCell id="26" style="edgeStyle=orthogonalEdgeStyle;rounded=1;endArrow=block;html=1;" parent="1" source="8" edge="1"/>
+                <mxCell id="27" value="Admin Module" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontColor=#0d0c0c;" parent="1" vertex="1">
+                    <mxGeometry x="650.5" y="678" width="180" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="&lt;span style=&quot;font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important; background-color: rgb(186, 200, 211);&quot;&gt;&lt;font style=&quot;&quot; color=&quot;#9e6161&quot;&gt;PostgreSQL (TypeORM)&lt;/font&gt;&lt;/span&gt;" style="shape=datastore;whiteSpace=wrap;html=1;fillColor=#bac8d3;strokeColor=#23445d;" parent="1" vertex="1">
+                    <mxGeometry x="1210" y="433" width="120" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" value="" style="group" parent="1" vertex="1" connectable="0">
+                    <mxGeometry x="1080" y="428" width="90" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" value="" style="html=1;shape=mxgraph.basic.isocube;isoAngle=15;labelBackgroundColor=none;labelBorderColor=none;fontColor=#9e6161;fillColor=#b63535;" parent="36" vertex="1">
+                    <mxGeometry x="-10" y="-10" width="100" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" value="Redis Cache" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;labelBorderColor=none;fontColor=#f7f7f7;" parent="36" vertex="1">
+                    <mxGeometry x="10" y="-2" width="60" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="39" value="NestJS API" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;labelBorderColor=none;fontColor=#f5f5f5;" parent="1" vertex="1">
+                    <mxGeometry x="631.5" y="190" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="55" value="Middlewares" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;labelBorderColor=none;fontColor=#f5f5f5;" parent="1" vertex="1">
+                    <mxGeometry x="418" y="300.5" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="61" value="" style="edgeStyle=none;html=1;fontColor=#f5f5f5;entryX=-0.006;entryY=0.233;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="34" target="28" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="62" value="Modules" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;labelBorderColor=none;fontColor=#f5f5f5;" parent="1" vertex="1">
+                    <mxGeometry x="685.5" y="243" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="63" value="Swagger docs &lt;br&gt;/api/docs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;fontColor=#0d0c0c;" parent="1" vertex="1">
+                    <mxGeometry x="383" y="620" width="180" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="60" value="" style="edgeStyle=none;html=1;fontColor=#f5f5f5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1.014;exitY=0.438;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="59" target="34" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="850.5" y="353" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="66" value="GET /restaurants&lt;br&gt;GET /restaurants/:id&lt;br&gt;GET /restaurants/:id/reviews&lt;br&gt;GET /admin/stats" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;labelBorderColor=none;fontColor=#f5f5f5;" vertex="1" parent="1">
+                    <mxGeometry x="838.5" y="383" width="200" height="100" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

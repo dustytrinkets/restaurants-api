@@ -5,6 +5,13 @@
 This project is a NestJS backend API built in TypeScript, designed to manage restaurants, users, reviews, and favorites.
 It follows a modular and scalable architecture, aligned with best practices for maintainability and future growth.
 
+### 📝 Architecture Diagrams
+
+- [API structure diagram (Modules & Middlewares)](./docs/api-structure-diagram.drawio)
+- [Sequence diagram](./docs/sequence-diagram.drawio)
+- [Current Deployment](./docs/deployment.drawio)
+- [Scaled Architecture](./docs/deployment-scaled.drawio)
+
 ### ⚒️ Key Technologies
 
 - NestJS – for structured, modular application design.
@@ -17,7 +24,7 @@ It follows a modular and scalable architecture, aligned with best practices for 
 
 - Swagger – for API documentation can be found [here](https://restaurants-api-production-9595.up.railway.app/api/docs).
 
-- Throttler – for rate limiting and basic protection against abuse.
+- Throttler – for rate limiting and basic protection against abuse for high load endpoints .
 
 - GitHub Actions – handles continuous integration and automated testing before deployment.
 - Railway – for deployment and managed PostgreSQL hosting.
@@ -36,7 +43,7 @@ It follows a modular and scalable architecture, aligned with best practices for 
 
 - Admin Module – Restricted to ADMIN users for managing restaurants and viewing statistics.
 
-- Middleware and Guards
+### 👮🏻‍♂️ Middleware and Guards
 
 - Auth Middleware / JWT Guard – Validates tokens and attaches the authenticated user to the request.
 
@@ -44,7 +51,7 @@ It follows a modular and scalable architecture, aligned with best practices for 
 
 - Throttler Guard – Applies request rate limits based on client IP.
 
-### 🪜 Scalability Considerations
+### 📈 Scalability Considerations
 
 The app is designed with scalability in mind:
 
@@ -61,7 +68,7 @@ The API CI/CD is on Github Actions & Railway, which automatically build and serv
 
 ## 🚀 Quick Start
 
-### 👷‍♀️ Development
+### 💻 Development
 
 1. Add the .env file
 ```bash
@@ -140,7 +147,7 @@ npm run migration:run
 
 Visit http://localhost:3000/api/docs for interactive API documentation.
 
-## 🚀 Deployment
+## 🔌 Deployment
 
 ### GitHub Actions & Railway
 Push to `main` branch to trigger automated deployment:
