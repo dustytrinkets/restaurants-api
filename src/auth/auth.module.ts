@@ -15,6 +15,7 @@ import { CacheService } from '../common/services/cache.service';
   imports: [
     TypeOrmModule.forFeature([User]),
     PassportModule,
+    ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
