@@ -1,0 +1,52 @@
+<mxfile host="65bd71144e">
+    <diagram id="ci-cd-flow" name="CI-CD Flow (Current)">
+        <mxGraphModel dx="991" dy="940" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="CI/CD Workflow" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+                    <mxGeometry x="159" y="260" width="520" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="github" value="GitHub Repo (main)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#3399ff;fontSize=12;fontStyle=1;align=center;fontColor=#030303;" parent="1" vertex="1">
+                    <mxGeometry x="59" y="330" width="170" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="actions" value="GitHub Actions&lt;br&gt;(github/workflows/deploy.yml)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#000000;fontSize=12;fontStyle=1;align=center;fontColor=#030303;" parent="1" vertex="1">
+                    <mxGeometry x="269" y="325" width="270" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="build-artifacts" value="Build Artifacts&lt;br&gt;(dist/)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=center;fontColor=#030303;" vertex="1" parent="1">
+                    <mxGeometry x="599" y="330" width="170" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-main-1" style="endArrow=block;html=1;rounded=0;fontColor=#030303;" edge="1" parent="1" source="github" target="actions">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-main-2" style="endArrow=block;html=1;rounded=0;fontColor=#030303;" edge="1" parent="1" source="actions" target="build-artifacts">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="step-checkout" value="Checkout code" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;fontSize=11;align=center;fontColor=#030303;" vertex="1" parent="1">
+                    <mxGeometry x="269" y="410" width="130" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="step-setup" value="Setup Node 18" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;fontSize=11;align=center;fontColor=#030303;" vertex="1" parent="1">
+                    <mxGeometry x="409" y="410" width="130" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="step-install" value="npm ci" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;fontSize=11;align=center;fontColor=#030303;" vertex="1" parent="1">
+                    <mxGeometry x="269" y="455" width="130" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="step-test" value="Unit tests" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;fontSize=11;align=center;fontColor=#030303;" vertex="1" parent="1">
+                    <mxGeometry x="409" y="455" width="130" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="step-e2e" value="E2E tests (sqlite)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;fontSize=11;align=center;fontColor=#030303;" vertex="1" parent="1">
+                    <mxGeometry x="269" y="500" width="130" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="step-build" value="Build (npm run build)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999999;fontSize=11;align=center;fontColor=#030303;" vertex="1" parent="1">
+                    <mxGeometry x="409" y="500" width="130" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="railway-note" value="Deploy on Railway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=center;fontColor=#030303;" vertex="1" parent="1">
+                    <mxGeometry x="599" y="420" width="170" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-dashed" style="endArrow=block;html=1;rounded=0;dashed=1;strokeColor=#d6b656;fontColor=#030303;" edge="1" parent="1" source="build-artifacts" target="railway-note">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

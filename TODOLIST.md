@@ -53,7 +53,7 @@ Some pointers or ideas:
 
 Please use [draw.io](https://draw.io), [excalidraw](https://excalidraw.com) or any similar schema tools to create a diagram of the overall architecture of your application.
 
-- [ ] Diagram 1: expose to us how you have designed your current application.
+- [X] Diagram 1: expose to us how you have designed your current application.
 
 Imagine that after some time our application has *100.000 users per week* and some peak timings during the day with a lot of requests & traffic. 
 
@@ -68,13 +68,13 @@ Imagine that after some time our application has *100.000 users per week* and so
 
 ## TODO:
 
-- [X] Logs
-- [ ] Connection pooling for DB
 - [ ] Review README after finishing
 
 ## Future steps
 
+- [X] Logs
+- [ ] Implement redis
+- [ ] Connection pooling for DB
 - [ ] Health checks and monitoring (Prometheus, Grafana, etc).
 - [ ] Async queue for heavy tasks (reviews analytics, stats aggregation).
-- [ ] Implement redis
 - [ ] Add step to run migrations on CI on production

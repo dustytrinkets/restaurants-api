@@ -9,8 +9,10 @@ It follows a modular and scalable architecture, aligned with best practices for 
 
 - [API structure diagram (Modules & Middlewares)](./docs/api-structure-diagram.drawio)
 - [Sequence diagram](./docs/sequence-diagram.drawio)
-- [Current Deployment](./docs/deployment.drawio)
-- [Scaled Architecture](./docs/deployment-scaled.drawio)
+- [CI/CD workflow](./docs/cicd-flow.drawio)
+- [Current Deployment](./docs/deployment.drawio) TBD
+- [Scaled Architecture](./docs/deployment-scaled.drawio) TBD
+
 
 ### ⚒️ Key Technologies
 
@@ -64,7 +66,6 @@ The app is designed with scalability in mind:
 ### 🔌 Deployment
 
 The API CI/CD is on Github Actions & Railway, which automatically build and serve the NestJS application.
-
 
 ## 🚀 Quick Start
 
@@ -148,6 +149,7 @@ npm run migration:run
 Visit http://localhost:3000/api/docs for interactive API documentation.
 
 ## 🔌 Deployment
+[CI/CD workflow](./docs/cicd-flow.drawio)
 
 ### GitHub Actions & Railway
 Push to `main` branch to trigger automated deployment:
