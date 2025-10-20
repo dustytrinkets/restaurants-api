@@ -35,7 +35,7 @@ export class QueryRestaurantsDto {
   limit?: number = 10;
 
   @ApiPropertyOptional({
-    example: 'Italian',
+    example: 'Asian',
     description: 'Filter by cuisine type',
   })
   @IsOptional()
@@ -43,7 +43,7 @@ export class QueryRestaurantsDto {
   cuisine?: string;
 
   @ApiPropertyOptional({
-    example: 4.5,
+    example: 3,
     description: 'Filter by minimum rating',
     minimum: 0,
     maximum: 5,

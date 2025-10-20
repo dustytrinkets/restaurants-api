@@ -32,9 +32,9 @@
     "docker:prod:logs": "docker-compose logs -f",
     "dev:logs": "npm run docker:up && npm run docker:logs",
     "dev": "npm run docker:up && npm run start:dev",
-    "dev:db": "docker-compose -f docker-compose.local.yml up postgres redis -d",
+    "dev:db": "docker-compose -f docker-compose.local.yml up postgres -d",
     "dev:db:down": "docker-compose -f docker-compose.local.yml down",
-    "dev:db:logs": "docker-compose -f docker-compose.local.yml logs -f postgres redis",
+    "dev:db:logs": "docker-compose -f docker-compose.local.yml logs -f postgres",
     "prepare": "husky"
   },
   "dependencies": {

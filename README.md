@@ -82,7 +82,9 @@ DATABASE_URL=postgresql://localhost/restaurants_dev
 
 2. Install dependencies `npm install`
 
-3. Start the local db on docker `npm run docker:up`
+3. Start the local db on docker `npm run dev:db`
+
+4. Migrate existing sqlite to postgres: check the [MIGRATION_GUIDE.md](scripts/MIGRATION_GUIDE.md)
 
 4. Start development server `npm run start:dev`
 
