@@ -18,7 +18,7 @@ import { CacheService } from '../common/services/cache.service';
     ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET') || 'dev-jwt-secret',
         signOptions: { expiresIn: '24h' },
       }),
