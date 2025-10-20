@@ -54,10 +54,15 @@ Some pointers or ideas:
 Please use [draw.io](https://draw.io), [excalidraw](https://excalidraw.com) or any similar schema tools to create a diagram of the overall architecture of your application.
 
 - [X] Diagram 1: expose to us how you have designed your current application.
+  - [API structure diagram (Modules & Middlewares)](./docs/api-structure-diagram.drawio)
+  - [Sequence diagram](./docs/sequence-diagram.drawio)
+  - [CI/CD workflow](./docs/cicd-flow.drawio)
 
 Imagine that after some time our application has *100.000 users per week* and some peak timings during the day with a lot of requests & traffic. 
 
-- [ ] Diagram 2: expose to us how you would scale your application with these new conditions and what you would do to improve the performance of your application.
+- [X] Diagram 2: expose to us how you would scale your application with these new conditions and what you would do to improve the performance of your application.
+  - [Current & Scaled Architecture](./docs/architecture-scaled.drawio)
+
 
 ## Bonus points
 

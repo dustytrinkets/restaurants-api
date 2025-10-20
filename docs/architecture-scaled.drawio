@@ -1,0 +1,121 @@
+<mxfile host="65bd71144e">
+    <diagram name="Comprehensive Deployment Architecture" id="deployment-comprehensive">
+        <mxGraphModel dx="1187" dy="747" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="20" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#3399ff;fontSize=11;fontStyle=1;align=center;fontColor=#030202;" vertex="1" parent="1">
+                    <mxGeometry x="1171" y="380" width="379" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#3399ff;fontSize=11;fontStyle=1;align=center;fontColor=#030202;" parent="1" vertex="1">
+                    <mxGeometry x="1175" y="494" width="375" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="title" value="Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="570" y="10" width="500" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="prod-env" value="Current architecture" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;fontStyle=1;align=center;fontColor=#030202;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="70" width="700" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" style="edgeStyle=none;html=1;exitX=1.002;exitY=0.238;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontColor=#FFFFFF;exitPerimeter=0;" parent="1" source="prod-app" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="270" y="312.5" as="sourcePoint"/>
+                        <mxPoint x="505" y="310" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="18" style="edgeStyle=none;html=1;entryX=0.005;entryY=0.428;entryDx=0;entryDy=0;entryPerimeter=0;fontColor=#FFFFFF;exitX=1.003;exitY=0.699;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="prod-app" target="prod-postgres" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="prod-app" value="NestJS App (Docker)&lt;br&gt;Railway Container" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontColor=#030202;" parent="1" vertex="1">
+                    <mxGeometry x="130" y="280" width="140" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="prod-postgres" value="PostgreSQL&lt;br&gt;Railway Database" style="shape=database;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontColor=#030202;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="350" width="130" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="prod-redis" value="Redis Cache on Railway" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontColor=#030202;" parent="1" vertex="1">
+                    <mxGeometry x="505" y="280" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="scaled-env" value="Scaled Application Architecture" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14;fontStyle=1;align=center;fontColor=#030202;" parent="1" vertex="1">
+                    <mxGeometry x="891" y="70" width="700" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="cdn" value="API Gateway&lt;br&gt;&lt;span style=&quot;font-weight: normal;&quot;&gt;Rate Limiting&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#3399ff;fontSize=11;fontStyle=1;align=center;fontColor=#030202;" parent="1" vertex="1">
+                    <mxGeometry x="891" y="280" width="160" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="load-balancer" target="20">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="load-balancer" value="&lt;b&gt;Load Balancer&lt;br&gt;&lt;/b&gt;Traffic Distribution&lt;br&gt;Health checks" style="shape=trapezoid;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=center;fontColor=#030202;" parent="1" vertex="1">
+                    <mxGeometry x="1190" y="280" width="340" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.179;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;fontColor=#FFFFFF;" parent="1" source="app-instance-1" target="11" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1242.3" y="480.44000000000005" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="app-instance-1" value="NestJS App&#10;Instance #1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#030202;" parent="1" vertex="1">
+                    <mxGeometry x="1192" y="412" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontColor=#FFFFFF;" parent="1" source="app-instance-2" target="11" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1362.55" y="482" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="app-instance-2" value="NestJS App&#10;Instance #2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#030202;" parent="1" vertex="1">
+                    <mxGeometry x="1312" y="412" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" style="edgeStyle=none;html=1;entryX=0.818;entryY=0.003;entryDx=0;entryDy=0;entryPerimeter=0;fontColor=#FFFFFF;" parent="1" source="app-instance-3" target="11" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1482.4299999999998" y="482" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="app-instance-3" value="NestJS App&#10;Instance #3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#030202;" parent="1" vertex="1">
+                    <mxGeometry x="1432" y="412" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="shared-redis" value="Redis Cache&#10;(Shared)" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontColor=#030202;" parent="1" vertex="1">
+                    <mxGeometry x="1192" y="505" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="primary-db" value="PostgreSQL&#10;(Primary)" style="shape=database;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontColor=#030202;" parent="1" vertex="1">
+                    <mxGeometry x="1312" y="505" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="read-replica-1" value="Read Replica #1" style="shape=database;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontColor=#030202;" parent="1" vertex="1">
+                    <mxGeometry x="1432" y="505" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="scaled-conn1" value="" style="endArrow=block;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;fontColor=#030202;" parent="1" source="cdn" target="load-balancer" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="900" y="480" as="sourcePoint"/>
+                        <mxPoint x="1090" y="420" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="client-conn3" value="" style="endArrow=block;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;fontSize=10;fontColor=#FFFFFF;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="4" target="cdn" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="100" y="560" as="sourcePoint"/>
+                        <mxPoint x="971" y="360" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="legend-prod" value="Current: Railway + PostgreSQL + Redis + CI/CD" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="140" width="680" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend-scaled" value="Scaled: Gateway + Load Balancer + Auto Scaling + Multiple Instances + Read Replicas" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;" parent="1" vertex="1">
+                    <mxGeometry x="891" y="140" width="699" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Client" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#3399ff;fontSize=12;fontStyle=1;align=center;fontColor=#030202;" parent="1" vertex="1">
+                    <mxGeometry x="911" y="510" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Monitoring, Alerts &amp;amp; Error tracking &lt;br&gt;(Datadog,&amp;nbsp;Sentry)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#000000;fontSize=12;fontColor=#080707;" parent="1" vertex="1">
+                    <mxGeometry x="1192" y="565" width="340" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="" style="endArrow=block;html=1;rounded=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;fontSize=10;fontColor=#FFFFFF;" parent="1" source="7" target="prod-app" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="-670" y="600" as="sourcePoint"/>
+                        <mxPoint x="201" y="340" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="7" value="Client" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#3399ff;fontSize=12;fontStyle=1;align=center;fontColor=#030202;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="480" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="Auto Scaling" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#050000;" vertex="1" parent="1">
+                    <mxGeometry x="1322" y="382" width="80" height="30" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

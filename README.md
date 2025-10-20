@@ -10,8 +10,7 @@ It follows a modular and scalable architecture, aligned with best practices for 
 - [API structure diagram (Modules & Middlewares)](./docs/api-structure-diagram.drawio)
 - [Sequence diagram](./docs/sequence-diagram.drawio)
 - [CI/CD workflow](./docs/cicd-flow.drawio)
-- [Current Deployment](./docs/deployment.drawio) TBD
-- [Scaled Architecture](./docs/deployment-scaled.drawio) TBD
+- [Current & Scaled Architecture](./docs/architecture-scaled.drawio)
 
 
 ### ⚒️ Key Technologies
