@@ -7,6 +7,7 @@ import {
 } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
 import { StatsDto } from './dto/stats.dto';
+import { TopRestaurantsStatsDto } from './dto/restaurant-stats.dto';
 import { UserRole } from '../common/enums/user-role.enum';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -33,5 +34,25 @@ export class AdminController {
   })
   async getStats(): Promise<StatsDto> {
     return this.adminService.getStats();
+  }
+
+  @Get('restaurants/top')
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Get top rated and most reviewed restaurants (Admin only)',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Return top 3 rated restaurants and top 3 most reviewed restaurants.',
+    type: TopRestaurantsStatsDto,
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden. Admin access required.',
+  })
+  getTopRestaurantsStats(): Promise<TopRestaurantsStatsDto> {
+    return this.adminService.getTopRestaurantsStats();
   }
 }

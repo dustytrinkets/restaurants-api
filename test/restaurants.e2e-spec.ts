@@ -10,6 +10,7 @@ import { User } from '../src/entities/user.entity';
 import { Express } from 'express';
 import { UserRole } from '../src/common/enums/user-role.enum';
 import { AuthResponseDto } from '../src/auth/dto/auth-response.dto';
+import { TopRestaurantsStatsDto } from '../src/admin/dto/restaurant-stats.dto';
 
 interface RestaurantWithRating extends Restaurant {
   averageRating?: number;
@@ -550,6 +551,239 @@ describe('Restaurants (e2e)', () => {
         .expect((res) => {
           const body = res.body as { message: string };
           expect(body.message).toBe('Restaurant with ID 999 not found');
+        });
+    });
+  });
+
+  describe('GET /admin/restaurants/top', () => {
+    beforeEach(async () => {
+      const restaurants = [
+        {
+          name: 'Top Rated Restaurant',
+          neighborhood: 'Manhattan',
+          cuisine_type: 'Italian',
+          address: '123 Main St',
+          lat: 40.7128,
+          lng: -74.006,
+        },
+        {
+          name: 'Second Best Restaurant',
+          neighborhood: 'Brooklyn',
+          cuisine_type: 'Mexican',
+          address: '456 Oak Ave',
+          lat: 40.6782,
+          lng: -73.9442,
+        },
+        {
+          name: 'Third Best Restaurant',
+          neighborhood: 'Queens',
+          cuisine_type: 'Asian',
+          address: '789 Pine St',
+          lat: 40.7282,
+          lng: -73.7949,
+        },
+        {
+          name: 'Most Reviewed Restaurant',
+          neighborhood: 'Manhattan',
+          cuisine_type: 'American',
+          address: '321 Broadway',
+          lat: 40.7589,
+          lng: -73.9851,
+        },
+        {
+          name: 'Second Most Reviewed',
+          neighborhood: 'Brooklyn',
+          cuisine_type: 'French',
+          address: '654 Park Ave',
+          lat: 40.7505,
+          lng: -73.9934,
+        },
+        {
+          name: 'Third Most Reviewed',
+          neighborhood: 'Queens',
+          cuisine_type: 'Indian',
+          address: '987 5th Ave',
+          lat: 40.7614,
+          lng: -73.9776,
+        },
+      ];
+
+      const savedRestaurants: Restaurant[] = [];
+      for (const restaurant of restaurants) {
+        savedRestaurants.push(await restaurantRepository.save(restaurant));
+      }
+
+      await reviewRepository.save([
+        {
+          restaurant_id: savedRestaurants[0].id,
+          user_id: 1,
+          rating: 5.0,
+          comments: 'Excellent!',
+          date: '2025-01-01',
+        },
+        {
+          restaurant_id: savedRestaurants[0].id,
+          user_id: 2,
+          rating: 4.8,
+          comments: 'Amazing food',
+          date: '2025-01-02',
+        },
+        {
+          restaurant_id: savedRestaurants[1].id,
+          user_id: 1,
+          rating: 4.5,
+          comments: 'Very good',
+          date: '2025-01-01',
+        },
+        {
+          restaurant_id: savedRestaurants[1].id,
+          user_id: 2,
+          rating: 4.2,
+          comments: 'Good service',
+          date: '2025-01-02',
+        },
+        {
+          restaurant_id: savedRestaurants[2].id,
+          user_id: 1,
+          rating: 4.0,
+          comments: 'Nice place',
+          date: '2025-01-01',
+        },
+        {
+          restaurant_id: savedRestaurants[2].id,
+          user_id: 2,
+          rating: 3.8,
+          comments: 'Decent food',
+          date: '2025-01-02',
+        },
+        {
+          restaurant_id: savedRestaurants[3].id,
+          user_id: 1,
+          rating: 4.0,
+          comments: 'Good',
+          date: '2025-01-01',
+        },
+        {
+          restaurant_id: savedRestaurants[3].id,
+          user_id: 2,
+          rating: 3.5,
+          comments: 'Okay',
+          date: '2025-01-02',
+        },
+        {
+          restaurant_id: savedRestaurants[3].id,
+          user_id: 3,
+          rating: 4.2,
+          comments: 'Nice',
+          date: '2025-01-03',
+        },
+        {
+          restaurant_id: savedRestaurants[3].id,
+          user_id: 4,
+          rating: 3.8,
+          comments: 'Average',
+          date: '2025-01-04',
+        },
+        {
+          restaurant_id: savedRestaurants[4].id,
+          user_id: 1,
+          rating: 3.5,
+          comments: 'Decent',
+          date: '2025-01-01',
+        },
+        {
+          restaurant_id: savedRestaurants[4].id,
+          user_id: 2,
+          rating: 3.0,
+          comments: 'Okay',
+          date: '2025-01-02',
+        },
+        {
+          restaurant_id: savedRestaurants[4].id,
+          user_id: 3,
+          rating: 3.8,
+          comments: 'Good',
+          date: '2025-01-03',
+        },
+        {
+          restaurant_id: savedRestaurants[5].id,
+          user_id: 1,
+          rating: 3.2,
+          comments: 'Average',
+          date: '2025-01-01',
+        },
+        {
+          restaurant_id: savedRestaurants[5].id,
+          user_id: 2,
+          rating: 3.5,
+          comments: 'Decent',
+          date: '2025-01-02',
+        },
+      ]);
+    });
+
+    it('should return top 3 rated restaurants', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/admin/restaurants/top')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as TopRestaurantsStatsDto;
+          expect(body.topRated).toHaveLength(3);
+          expect(body.mostReviewed).toHaveLength(3);
+
+          expect(Number(body.topRated[0].averageRating)).toBeGreaterThanOrEqual(
+            Number(body.topRated[1].averageRating),
+          );
+          expect(Number(body.topRated[1].averageRating)).toBeGreaterThanOrEqual(
+            Number(body.topRated[2].averageRating),
+          );
+
+          expect(
+            Number(body.mostReviewed[0].reviewCount),
+          ).toBeGreaterThanOrEqual(Number(body.mostReviewed[1].reviewCount));
+          expect(
+            Number(body.mostReviewed[1].reviewCount),
+          ).toBeGreaterThanOrEqual(Number(body.mostReviewed[2].reviewCount));
+        });
+    });
+
+    it('should fail without admin token', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/admin/restaurants/top')
+        .expect(401);
+    });
+
+    it('should fail with regular user token', async () => {
+      const userData = {
+        email: 'user@example.com',
+        password: 'password123',
+        name: 'Regular User',
+        role: UserRole.USER,
+      };
+
+      const response = await request(app.getHttpServer() as Express)
+        .post('/auth/register')
+        .send(userData)
+        .expect(201);
+
+      const userToken = (response.body as AuthResponseDto).access_token;
+
+      return request(app.getHttpServer() as Express)
+        .get('/admin/restaurants/top')
+        .set('Authorization', `Bearer ${userToken}`)
+        .expect(403);
+    });
+
+    it('should return exactly 3 restaurants for each category', () => {
+      return request(app.getHttpServer() as Express)
+        .get('/admin/restaurants/top')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200)
+        .expect((res) => {
+          const body = res.body as TopRestaurantsStatsDto;
+          expect(body.topRated).toHaveLength(3);
+          expect(body.mostReviewed).toHaveLength(3);
         });
     });
   });
