@@ -69,7 +69,7 @@ Imagine that after some time our application has *100.000 users per week* and so
 - [X] Deploy the app.
 - [X] Write realistic unit & end-to-end tests.
 - [X] Good documentation is appreciated (with tools like Swagger, Postman, etc or just explicit guidance in the README.md)
-- [ ] For statistics: if you have time, create a query that returns the top 3 rated restaurants, the top 3 most reviewed restaurants.
+- [X] For statistics: if you have time, create a query that returns the top 3 rated restaurants, the top 3 most reviewed restaurants.
 
 ## TODO:
 
