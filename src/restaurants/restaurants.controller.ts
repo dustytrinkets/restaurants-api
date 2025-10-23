@@ -11,8 +11,6 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { Throttle } from '@nestjs/throttler';
-import { Public } from '../auth/decorators/public.decorator';
 import {
   ApiTags,
   ApiOperation,
@@ -21,24 +19,24 @@ import {
   ApiQuery,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
+import { plainToInstance } from 'class-transformer';
 
-import { CreateRestaurantDto } from './dto/create-restaurant.dto';
-import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
-import { QueryRestaurantsDto } from './dto/query-restaurants.dto';
-import { RestaurantWithRatingDto } from './dto/restaurant-with-rating.dto';
+import { Public } from '../auth/decorators/public.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { PaginatedResponseDto } from '../common/dto/paginated-response.dto';
-
-import { RestaurantsService } from './restaurants.service';
+import { UserRole } from '../common/enums/user-role.enum';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Restaurant } from '../entities/restaurant.entity';
+import { Review } from '../entities/review.entity';
 import { ReviewsService } from '../reviews/reviews.service';
 
-import { Review } from '../entities/review.entity';
-import { Restaurant } from '../entities/restaurant.entity';
-
+import { CreateRestaurantDto } from './dto/create-restaurant.dto';
+import { QueryRestaurantsDto } from './dto/query-restaurants.dto';
+import { RestaurantWithRatingDto } from './dto/restaurant-with-rating.dto';
+import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { RestaurantWithRating } from './interfaces/restaurant-with-rating.interface';
-import { UserRole } from '../common/enums/user-role.enum';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { RolesGuard } from '../common/guards/roles.guard';
-import { plainToInstance } from 'class-transformer';
+import { RestaurantsService } from './restaurants.service';
 
 @ApiTags('restaurants')
 @Controller('restaurants')

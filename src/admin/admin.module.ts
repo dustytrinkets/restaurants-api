@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AdminController } from './admin.controller';
-import { AdminService } from './admin.service';
-import { User } from '../entities/user.entity';
+
+import { CacheService } from '../common/services/cache.service';
 import { Restaurant } from '../entities/restaurant.entity';
 import { Review } from '../entities/review.entity';
-import { CacheService } from '../common/services/cache.service';
+import { User } from '../entities/user.entity';
+
+import { AdminController } from './admin.controller';
+import { AdminService } from './admin.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Restaurant, Review])],

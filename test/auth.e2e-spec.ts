@@ -1,14 +1,19 @@
+import {
+  INestApplication,
+  HttpException,
+  ValidationPipe,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, HttpException } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { ValidationPipe } from '@nestjs/common';
-import request from 'supertest';
 import { Express } from 'express';
+import request from 'supertest';
 import { Repository } from 'typeorm';
-import { TestAppModule } from './test-app.module';
-import { User } from '../src/entities/user.entity';
-import { UserRole } from '../src/common/enums/user-role.enum';
+
 import { AuthResponseDto } from '../src/auth/dto/auth-response.dto';
+import { UserRole } from '../src/common/enums/user-role.enum';
+import { User } from '../src/entities/user.entity';
+
+import { TestAppModule } from './test-app.module';
 
 describe('Auth (e2e)', () => {
   let app: INestApplication;

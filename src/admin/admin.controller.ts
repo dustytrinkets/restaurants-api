@@ -5,12 +5,15 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { AdminService } from './admin.service';
-import { StatsDto } from './dto/stats.dto';
-import { TopRestaurantsStatsDto } from './dto/restaurant-stats.dto';
-import { UserRole } from '../common/enums/user-role.enum';
+import { plainToInstance } from 'class-transformer';
+
 import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '../common/enums/user-role.enum';
 import { RolesGuard } from '../common/guards/roles.guard';
+
+import { AdminService } from './admin.service';
+import { TopRestaurantsStatsDto } from './dto/restaurant-stats.dto';
+import { StatsDto } from './dto/stats.dto';
 
 @ApiTags('admin')
 @Controller('admin')
@@ -33,7 +36,8 @@ export class AdminController {
     description: 'Forbidden. Admin access required.',
   })
   async getStats(): Promise<StatsDto> {
-    return this.adminService.getStats();
+    const stats = await this.adminService.getStats();
+    return plainToInstance(StatsDto, stats);
   }
 
   @Get('restaurants/top')
@@ -52,7 +56,8 @@ export class AdminController {
     status: 403,
     description: 'Forbidden. Admin access required.',
   })
-  getTopRestaurantsStats(): Promise<TopRestaurantsStatsDto> {
-    return this.adminService.getTopRestaurantsStats();
+  async getTopRestaurantsStats(): Promise<TopRestaurantsStatsDto> {
+    const stats = await this.adminService.getTopRestaurantsStats();
+    return plainToInstance(TopRestaurantsStatsDto, stats);
   }
 }

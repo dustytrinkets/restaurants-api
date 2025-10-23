@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FavoritesService } from './favorites.service';
-import { FavoritesController } from './favorites.controller';
+
+import { CacheService } from '../common/services/cache.service';
+import { LoggingService } from '../common/services/logging.service';
 import { Favorite } from '../entities/favorite.entity';
 import { Restaurant } from '../entities/restaurant.entity';
-import { LoggingService } from '../common/services/logging.service';
-import { CacheService } from '../common/services/cache.service';
+
+import { FavoritesController } from './favorites.controller';
+import { FavoritesService } from './favorites.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Favorite, Restaurant])],

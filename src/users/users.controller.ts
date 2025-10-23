@@ -5,14 +5,16 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { plainToInstance } from 'class-transformer';
+
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '../common/enums/user-role.enum';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { User } from '../entities/user.entity';
+
 import { UserProfileDto } from './dto/user-profile.dto';
 import { UsersService } from './users.service';
-import { RolesGuard } from '../common/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { User } from '../entities/user.entity';
-import { UserRole } from '../common/enums/user-role.enum';
-import { plainToInstance } from 'class-transformer';
 
 @ApiTags('users')
 @Controller('users')

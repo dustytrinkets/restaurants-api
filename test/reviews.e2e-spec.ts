@@ -1,15 +1,16 @@
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import { ValidationPipe } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import request from 'supertest';
 import { Express } from 'express';
-import { TestAppModule } from './test-app.module';
+import request from 'supertest';
+import { Repository } from 'typeorm';
+
+import { AuthResponseDto } from '../src/auth/dto/auth-response.dto';
+import { UserRole } from '../src/common/enums/user-role.enum';
 import { Restaurant } from '../src/entities/restaurant.entity';
 import { Review } from '../src/entities/review.entity';
 import { User } from '../src/entities/user.entity';
-import { UserRole } from '../src/common/enums/user-role.enum';
-import { AuthResponseDto } from '../src/auth/dto/auth-response.dto';
+
+import { TestAppModule } from './test-app.module';
 
 describe('Reviews (e2e)', () => {
   let app: INestApplication;

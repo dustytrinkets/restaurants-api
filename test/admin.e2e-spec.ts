@@ -1,17 +1,18 @@
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import { ValidationPipe } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Express } from 'express';
 import request from 'supertest';
-import { TestAppModule } from './test-app.module';
+import { Repository } from 'typeorm';
+
+import { StatsDto } from '../src/admin/dto/stats.dto';
+import { AuthResponseDto } from '../src/auth/dto/auth-response.dto';
+import { UserRole } from '../src/common/enums/user-role.enum';
+import { CacheService } from '../src/common/services/cache.service';
 import { Restaurant } from '../src/entities/restaurant.entity';
 import { Review } from '../src/entities/review.entity';
 import { User } from '../src/entities/user.entity';
-import { Express } from 'express';
-import { UserRole } from '../src/common/enums/user-role.enum';
-import { AuthResponseDto } from '../src/auth/dto/auth-response.dto';
-import { StatsDto } from '../src/admin/dto/stats.dto';
-import { CacheService } from '../src/common/services/cache.service';
+
+import { TestAppModule } from './test-app.module';
 
 describe('Admin (e2e)', () => {
   let app: INestApplication;

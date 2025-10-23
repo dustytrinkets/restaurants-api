@@ -1,4 +1,5 @@
 import { SelectQueryBuilder } from 'typeorm';
+
 import { Restaurant } from '../../entities/restaurant.entity';
 import { RestaurantWithRatingDto } from '../dto/restaurant-with-rating.dto';
 

@@ -5,11 +5,12 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
+import { CACHE_KEYS } from '../common/constants/cache.constants';
+import { CacheService } from '../common/services/cache.service';
+import { LoggingService } from '../common/services/logging.service';
 import { Favorite } from '../entities/favorite.entity';
 import { Restaurant } from '../entities/restaurant.entity';
-import { LoggingService } from '../common/services/logging.service';
-import { CacheService } from '../common/services/cache.service';
-import { CACHE_KEYS } from '../common/constants/cache.constants';
 
 @Injectable()
 export class FavoritesService {

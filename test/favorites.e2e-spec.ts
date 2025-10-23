@@ -1,15 +1,16 @@
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import { ValidationPipe } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import request from 'supertest';
 import { Express } from 'express';
-import { TestAppModule } from './test-app.module';
-import { Restaurant } from '../src/entities/restaurant.entity';
-import { Favorite } from '../src/entities/favorite.entity';
-import { User } from '../src/entities/user.entity';
-import { UserRole } from '../src/common/enums/user-role.enum';
+import request from 'supertest';
+import { Repository } from 'typeorm';
+
 import { AuthResponseDto } from '../src/auth/dto/auth-response.dto';
+import { UserRole } from '../src/common/enums/user-role.enum';
+import { Favorite } from '../src/entities/favorite.entity';
+import { Restaurant } from '../src/entities/restaurant.entity';
+import { User } from '../src/entities/user.entity';
+
+import { TestAppModule } from './test-app.module';
 
 describe.only('Favorites (e2e)', () => {
   let app: INestApplication;

@@ -2,9 +2,10 @@
 /* eslint-disable no-console */
 
 import { NestFactory } from '@nestjs/core';
+
 import { AppModule } from '../app.module';
-import { MigrationService } from '../common/services/migration.service';
 import { LoggingService } from '../common/services/logging.service';
+import { MigrationService } from '../common/services/migration.service';
 
 async function runMigrations() {
   console.log('🚀 Starting migration execution...');

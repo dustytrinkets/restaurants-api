@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as crypto from 'crypto';
-import { LoggingService } from './logging.service';
+
+import { Injectable } from '@nestjs/common';
+import { DataSource } from 'typeorm';
+
 import { Migration } from '../interfaces/migrations.interface';
+
+import { LoggingService } from './logging.service';
 
 @Injectable()
 export class MigrationService {

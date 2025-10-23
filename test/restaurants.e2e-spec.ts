@@ -1,19 +1,20 @@
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
-import { ValidationPipe } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Express } from 'express';
+import { PaginatedResponse } from 'src/common/interfaces/paginated-response.interface';
+import { RestaurantWithRating } from 'src/restaurants/interfaces/restaurant-with-rating.interface';
 import request from 'supertest';
-import { TestAppModule } from './test-app.module';
+import { Repository } from 'typeorm';
+
+import { TopRestaurantsStatsDto } from '../src/admin/dto/restaurant-stats.dto';
+import { AuthResponseDto } from '../src/auth/dto/auth-response.dto';
+import { UserRole } from '../src/common/enums/user-role.enum';
 import { Restaurant } from '../src/entities/restaurant.entity';
 import { Review } from '../src/entities/review.entity';
 import { User } from '../src/entities/user.entity';
-import { Express } from 'express';
-import { UserRole } from '../src/common/enums/user-role.enum';
-import { AuthResponseDto } from '../src/auth/dto/auth-response.dto';
-import { TopRestaurantsStatsDto } from '../src/admin/dto/restaurant-stats.dto';
 import { RestaurantWithRatingDto } from '../src/restaurants/dto/restaurant-with-rating.dto';
-import { PaginatedResponse } from 'src/common/interfaces/paginated-response.interface';
-import { RestaurantWithRating } from 'src/restaurants/interfaces/restaurant-with-rating.interface';
+
+import { TestAppModule } from './test-app.module';
 
 describe('Restaurants (e2e)', () => {
   let app: INestApplication;

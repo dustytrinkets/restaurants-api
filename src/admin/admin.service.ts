@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity';
+
+import { CACHE_KEYS, CACHE_TTL } from '../common/constants/cache.constants';
+import { CacheService } from '../common/services/cache.service';
 import { Restaurant } from '../entities/restaurant.entity';
 import { Review } from '../entities/review.entity';
-import { StatsDto } from './dto/stats.dto';
+import { User } from '../entities/user.entity';
+
 import {
   TopRestaurantsStatsDto,
   RestaurantStatsDto,
 } from './dto/restaurant-stats.dto';
+import { StatsDto } from './dto/stats.dto';
 import { RestaurantStatsRaw } from './interfaces/restaurant-stats-raw.interface';
-import { CacheService } from '../common/services/cache.service';
-import { CACHE_KEYS, CACHE_TTL } from '../common/constants/cache.constants';
 
 @Injectable()
 export class AdminService {

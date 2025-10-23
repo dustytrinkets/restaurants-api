@@ -73,7 +73,7 @@ Imagine that after some time our application has *100.000 users per week* and so
 
 ## TODO:
 
-- [ ] Review README after finishing
+- [X] Review README after finishing
 
 ## Future steps
 

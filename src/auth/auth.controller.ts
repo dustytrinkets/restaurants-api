@@ -1,11 +1,13 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { plainToInstance } from 'class-transformer';
+
 import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
-import { AuthResponseDto } from './dto/auth-response.dto';
 import { Public } from './decorators/public.decorator';
+import { AuthResponseDto } from './dto/auth-response.dto';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -28,7 +30,8 @@ export class AuthController {
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   async register(@Body() registerDto: RegisterDto): Promise<AuthResponseDto> {
-    return this.authService.register(registerDto);
+    const authResponse = await this.authService.register(registerDto);
+    return plainToInstance(AuthResponseDto, authResponse);
   }
 
   @Post('login')
@@ -44,6 +47,7 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Invalid credentials.' })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   async login(@Body() loginDto: LoginDto): Promise<AuthResponseDto> {
-    return this.authService.login(loginDto);
+    const authResponse = await this.authService.login(loginDto);
+    return plainToInstance(AuthResponseDto, authResponse);
   }
 }

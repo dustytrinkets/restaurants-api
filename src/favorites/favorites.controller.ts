@@ -7,7 +7,6 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { Throttle } from '@nestjs/throttler';
 import {
   ApiTags,
   ApiOperation,
@@ -15,14 +14,17 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
-import { FavoritesService } from './favorites.service';
-import { Favorite } from '../entities/favorite.entity';
-import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
-import { RolesGuard } from '../common/guards/roles.guard';
+import { Throttle } from '@nestjs/throttler';
+
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../common/enums/user-role.enum';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Favorite } from '../entities/favorite.entity';
 import { User } from '../entities/user.entity';
+
+import { FavoritesService } from './favorites.service';
 
 @ApiTags('favorites')
 @Controller('me')

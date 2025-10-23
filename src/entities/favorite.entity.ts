@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   Entity,
   PrimaryColumn,
@@ -5,9 +6,9 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
-import { User } from './user.entity';
+
 import { Restaurant } from './restaurant.entity';
+import { User } from './user.entity';
 
 @Entity('favorites')
 export class Favorite {

@@ -9,7 +9,6 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { Throttle } from '@nestjs/throttler';
 import {
   ApiTags,
   ApiOperation,
@@ -17,16 +16,20 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
-import { ReviewsService } from './reviews.service';
-import { CreateReviewDto } from './dto/create-review.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
-import { Review } from '../entities/review.entity';
-import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
-import { RolesGuard } from '../common/guards/roles.guard';
+import { Throttle } from '@nestjs/throttler';
+import { plainToInstance } from 'class-transformer';
+
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../common/enums/user-role.enum';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Review } from '../entities/review.entity';
 import { User } from '../entities/user.entity';
+
+import { CreateReviewDto } from './dto/create-review.dto';
+import { UpdateReviewDto } from './dto/update-review.dto';
+import { ReviewsService } from './reviews.service';
 
 @ApiTags('reviews')
 @Controller('restaurants')
@@ -90,7 +93,8 @@ export class UserReviewsController {
     description: 'Unauthorized - Authentication required',
   })
   async findUserReviews(@CurrentUser() user: User): Promise<Review[]> {
-    return this.reviewsService.findByUser(user.id);
+    const reviews = await this.reviewsService.findByUser(user.id);
+    return plainToInstance(Review, reviews);
   }
 
   @Put('reviews/:id')

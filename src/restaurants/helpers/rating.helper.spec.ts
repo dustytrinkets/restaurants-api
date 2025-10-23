@@ -1,4 +1,5 @@
 import { Restaurant } from '../../entities/restaurant.entity';
+
 import { mapResultsWithAverageRating } from './rating.helper';
 
 describe('RatingHelper', () => {

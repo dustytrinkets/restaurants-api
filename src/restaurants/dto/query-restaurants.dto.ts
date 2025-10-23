@@ -1,4 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsOptional,
   IsString,
@@ -7,7 +8,6 @@ import {
   Max,
   IsIn,
 } from 'class-validator';
-import { Transform } from 'class-transformer';
 
 export class QueryRestaurantsDto {
   @ApiPropertyOptional({

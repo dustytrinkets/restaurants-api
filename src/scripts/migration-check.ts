@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 
 import { NestFactory } from '@nestjs/core';
+
 import { AppModule } from '../app.module';
 import { MigrationService } from '../common/services/migration.service';
 

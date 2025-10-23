@@ -1,6 +1,7 @@
 // @ts-check
 import eslint from '@eslint/js';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import eslintPluginImport from 'eslint-plugin-import';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -12,6 +13,9 @@ export default tseslint.config(
   ...tseslint.configs.recommendedTypeChecked,
   eslintPluginPrettierRecommended,
   {
+    plugins: {
+      import: eslintPluginImport,
+    },
     languageOptions: {
       globals: {
         ...globals.node,
@@ -31,6 +35,27 @@ export default tseslint.config(
           '@typescript-eslint/no-unsafe-argument': 'warn',
           "prettier/prettier": ["error", { endOfLine: "auto" }],
           "no-console": "error",
+          // Import ordering rules
+          "import/order": [
+            "error",
+            {
+              "groups": [
+                "builtin",
+                "external",
+                "internal",
+                "parent",
+                "sibling",
+                "index"
+              ],
+              "newlines-between": "always",
+              "alphabetize": {
+                "order": "asc",
+                "caseInsensitive": true
+              }
+            }
+          ],
+          "import/newline-after-import": "error",
+          "import/no-duplicates": "error"
         },
       },
   {

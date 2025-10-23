@@ -5,8 +5,9 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { UserRole } from '../enums/user-role.enum';
+
 import { ROLES_KEY } from '../../auth/decorators/roles.decorator';
+import { UserRole } from '../enums/user-role.enum';
 import { AuthenticatedRequest } from '../interfaces/authenticated-request.interface';
 
 @Injectable()

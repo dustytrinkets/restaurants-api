@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
-import { MigrationService } from '../services/migration.service';
+
 import { LoggingService } from '../services/logging.service';
+import { MigrationService } from '../services/migration.service';
 
 @Module({
   providers: [MigrationService, LoggingService],
