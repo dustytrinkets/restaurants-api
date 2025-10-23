@@ -11,18 +11,8 @@ import { Express } from 'express';
 import { UserRole } from '../src/common/enums/user-role.enum';
 import { AuthResponseDto } from '../src/auth/dto/auth-response.dto';
 import { TopRestaurantsStatsDto } from '../src/admin/dto/restaurant-stats.dto';
-
-interface RestaurantWithRating extends Restaurant {
-  averageRating?: number;
-}
-
-interface RestaurantsListResponse {
-  data: RestaurantWithRating[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
+import { RestaurantWithRatingDto } from '../src/restaurants/dto/restaurant-with-rating.dto';
+import { RestaurantsListResponse } from '../src/restaurants/interfaces/restaurants-list-response.interface';
 
 describe('Restaurants (e2e)', () => {
   let app: INestApplication;
@@ -93,7 +83,7 @@ describe('Restaurants (e2e)', () => {
         .send(createRestaurantDto)
         .expect(201)
         .expect((res) => {
-          const body = res.body as RestaurantWithRating;
+          const body = res.body as RestaurantWithRatingDto;
           expect(body.name).toBe(createRestaurantDto.name);
           expect(body.neighborhood).toBe(createRestaurantDto.neighborhood);
           expect(body.cuisine_type).toBe(createRestaurantDto.cuisine_type);
@@ -370,7 +360,7 @@ describe('Restaurants (e2e)', () => {
         .get(`/restaurants/${restaurant.id}`)
         .expect(200)
         .expect((res) => {
-          const body = res.body as RestaurantWithRating;
+          const body = res.body as RestaurantWithRatingDto;
           expect(body.id).toBe(restaurant.id);
           expect(body.name).toBe(restaurant.name);
           expect(body.neighborhood).toBe(restaurant.neighborhood);
@@ -490,7 +480,7 @@ describe('Restaurants (e2e)', () => {
         .send(updateDto)
         .expect(200)
         .expect((res) => {
-          const body = res.body as RestaurantWithRating;
+          const body = res.body as RestaurantWithRatingDto;
           expect(body.name).toBe(updateDto.name);
           expect(body.cuisine_type).toBe(updateDto.cuisine_type);
           expect(body.id).toBe(restaurant.id);

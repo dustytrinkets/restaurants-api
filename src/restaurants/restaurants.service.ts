@@ -11,6 +11,7 @@ import {
   mapResultsWithAverageRating,
 } from './helpers/rating.helper';
 import { RestaurantWithRating } from './interfaces/restaurant-with-rating.interface';
+import { PaginatedResponse } from '../common/interfaces/paginated-response.interface';
 import { LoggingService } from '../common/services/logging.service';
 import { CacheService } from '../common/services/cache.service';
 import { CACHE_KEYS, CACHE_TTL } from '../common/constants/cache.constants';
@@ -46,13 +47,9 @@ export class RestaurantsService {
     return savedRestaurant;
   }
 
-  async findAll(queryDto: QueryRestaurantsDto): Promise<{
-    data: RestaurantWithRating[];
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  }> {
+  async findAll(
+    queryDto: QueryRestaurantsDto,
+  ): Promise<PaginatedResponse<RestaurantWithRating>> {
     const {
       page = 1,
       limit = 10,
@@ -68,13 +65,10 @@ export class RestaurantsService {
       queryDto,
     );
 
-    const cachedResult = await this.cacheService.get<{
-      data: RestaurantWithRating[];
-      total: number;
-      page: number;
-      limit: number;
-      totalPages: number;
-    }>(cacheKey);
+    const cachedResult =
+      await this.cacheService.get<PaginatedResponse<RestaurantWithRating>>(
+        cacheKey,
+      );
 
     if (cachedResult) {
       return cachedResult;

@@ -4,7 +4,6 @@ import {
   ExecutionContext,
   CallHandler,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Request, Response } from 'express';
 import { LoggingService } from '../services/logging.service';
@@ -13,7 +12,7 @@ import { LoggingService } from '../services/logging.service';
 export class LoggingInterceptor implements NestInterceptor {
   constructor(private readonly loggingService: LoggingService) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest<Request>();
     const response = context.switchToHttp().getResponse<Response>();
     const startTime = Date.now();

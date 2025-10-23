@@ -4,12 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
 import { LoggingService } from './logging.service';
-
-interface Migration {
-  name: string;
-  path: string;
-  checksum: string;
-}
+import { Migration } from '../interfaces/migrations.interface';
 
 @Injectable()
 export class MigrationService {

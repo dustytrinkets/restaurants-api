@@ -1,5 +1,10 @@
-import { Restaurant } from '../../entities/restaurant.entity';
-
-export interface RestaurantWithRating extends Restaurant {
+export interface RestaurantWithRating {
+  id: number;
+  name: string;
+  neighborhood?: string;
+  cuisine_type?: string;
+  address?: string;
+  lat?: number;
+  lng?: number;
   averageRating: number;
 }

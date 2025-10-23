@@ -1,6 +1,6 @@
 import { SelectQueryBuilder } from 'typeorm';
 import { Restaurant } from '../../entities/restaurant.entity';
-import { RestaurantWithRating } from '../interfaces/restaurant-with-rating.interface';
+import { RestaurantWithRatingDto } from '../dto/restaurant-with-rating.dto';
 
 export function addAverageRatingToQuery(
   queryBuilder: SelectQueryBuilder<Restaurant>,
@@ -13,7 +13,7 @@ export function addAverageRatingToQuery(
 export function mapResultsWithAverageRating(
   entities: Restaurant[],
   rawResults: any[],
-): RestaurantWithRating[] {
+): RestaurantWithRatingDto[] {
   return entities.map((restaurant, index) => ({
     ...restaurant,
     averageRating: parseFloat(

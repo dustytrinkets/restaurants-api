@@ -27,6 +27,8 @@ import { Review } from '../entities/review.entity';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { QueryRestaurantsDto } from './dto/query-restaurants.dto';
+import { RestaurantWithRatingDto } from './dto/restaurant-with-rating.dto';
+import { PaginatedResponseDto } from '../common/dto/paginated-response.dto';
 import { Restaurant } from '../entities/restaurant.entity';
 import { UserRole } from '../common/enums/user-role.enum';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -87,19 +89,7 @@ export class RestaurantsController {
   @ApiResponse({
     status: 200,
     description: 'Return paginated restaurants with metadata.',
-    schema: {
-      type: 'object',
-      properties: {
-        data: {
-          type: 'array',
-          items: { $ref: '#/components/schemas/Restaurant' },
-        },
-        total: { type: 'number' },
-        page: { type: 'number' },
-        limit: { type: 'number' },
-        totalPages: { type: 'number' },
-      },
-    },
+    type: PaginatedResponseDto<RestaurantWithRatingDto>,
   })
   findAll(@Query() queryDto: QueryRestaurantsDto) {
     return this.restaurantsService.findAll(queryDto);
@@ -112,21 +102,7 @@ export class RestaurantsController {
   @ApiResponse({
     status: 200,
     description: 'Return the restaurant with average rating.',
-    schema: {
-      allOf: [
-        { $ref: '#/components/schemas/Restaurant' },
-        {
-          type: 'object',
-          properties: {
-            averageRating: {
-              type: 'number',
-              description: 'Average rating of the restaurant',
-              example: 4.5,
-            },
-          },
-        },
-      ],
-    },
+    type: RestaurantWithRatingDto,
   })
   @ApiResponse({ status: 404, description: 'Restaurant not found.' })
   findOne(@Param('id') id: string) {
