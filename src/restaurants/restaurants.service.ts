@@ -151,7 +151,7 @@ export class RestaurantsService {
 
     await this.cacheService.set(cacheKey, restaurant, CACHE_TTL.LONG);
 
-    return restaurant;
+    return restaurant as RestaurantWithRating;
   }
 
   async update(

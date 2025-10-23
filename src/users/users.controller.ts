@@ -12,6 +12,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { User } from '../entities/user.entity';
 import { UserRole } from '../common/enums/user-role.enum';
+import { plainToInstance } from 'class-transformer';
 
 @ApiTags('users')
 @Controller('users')
@@ -29,11 +30,11 @@ export class UsersController {
     type: UserProfileDto,
   })
   getProfile(@CurrentUser() user: User) {
-    return {
+    return plainToInstance(UserProfileDto, {
       id: user.id,
       email: user.email,
       name: user.name,
       role: user.role,
-    };
+    });
   }
 }

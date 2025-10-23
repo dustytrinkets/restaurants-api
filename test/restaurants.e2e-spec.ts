@@ -12,7 +12,8 @@ import { UserRole } from '../src/common/enums/user-role.enum';
 import { AuthResponseDto } from '../src/auth/dto/auth-response.dto';
 import { TopRestaurantsStatsDto } from '../src/admin/dto/restaurant-stats.dto';
 import { RestaurantWithRatingDto } from '../src/restaurants/dto/restaurant-with-rating.dto';
-import { RestaurantsListResponse } from '../src/restaurants/interfaces/restaurants-list-response.interface';
+import { PaginatedResponse } from 'src/common/interfaces/paginated-response.interface';
+import { RestaurantWithRating } from 'src/restaurants/interfaces/restaurant-with-rating.interface';
 
 describe('Restaurants (e2e)', () => {
   let app: INestApplication;
@@ -205,7 +206,7 @@ describe('Restaurants (e2e)', () => {
         .get('/restaurants')
         .expect(200)
         .expect((res) => {
-          const body = res.body as RestaurantsListResponse;
+          const body = res.body as PaginatedResponse<RestaurantWithRating>;
           expect(body.data).toHaveLength(3);
           expect(body.total).toBe(3);
           expect(body.page).toBe(1);
@@ -219,7 +220,7 @@ describe('Restaurants (e2e)', () => {
         .get('/restaurants')
         .expect(200)
         .expect((res) => {
-          const body = res.body as RestaurantsListResponse;
+          const body = res.body as PaginatedResponse<RestaurantWithRating>;
           expect(body.data[0].averageRating).toBe(0);
           expect(body.data[1].averageRating).toBe(4);
           expect(body.data[2].averageRating).toBe(4.5);
@@ -231,7 +232,7 @@ describe('Restaurants (e2e)', () => {
         .get('/restaurants?cuisine=Italian')
         .expect(200)
         .expect((res) => {
-          const body = res.body as RestaurantsListResponse;
+          const body = res.body as PaginatedResponse<RestaurantWithRating>;
           expect(body.data).toHaveLength(1);
           expect(body.data[0].cuisine_type).toBe('Italian');
         });
@@ -242,7 +243,7 @@ describe('Restaurants (e2e)', () => {
         .get('/restaurants?neighborhood=Brooklyn')
         .expect(200)
         .expect((res) => {
-          const body = res.body as RestaurantsListResponse;
+          const body = res.body as PaginatedResponse<RestaurantWithRating>;
           expect(body.data).toHaveLength(1);
           expect(body.data[0].neighborhood).toBe('Brooklyn');
         });
@@ -253,7 +254,7 @@ describe('Restaurants (e2e)', () => {
         .get('/restaurants?rating=4.5')
         .expect(200)
         .expect((res) => {
-          const body = res.body as RestaurantsListResponse;
+          const body = res.body as PaginatedResponse<RestaurantWithRating>;
           expect(body.data).toHaveLength(1);
           expect(body.data[0].averageRating).toBeGreaterThanOrEqual(4.5);
         });
@@ -264,7 +265,7 @@ describe('Restaurants (e2e)', () => {
         .get('/restaurants?sort=cuisine_type&order=asc')
         .expect(200)
         .expect((res) => {
-          const body = res.body as RestaurantsListResponse;
+          const body = res.body as PaginatedResponse<RestaurantWithRating>;
           expect(body.data[0].cuisine_type).toBe('Asian');
           expect(body.data[1].cuisine_type).toBe('Italian');
           expect(body.data[2].cuisine_type).toBe('Mexican');
@@ -276,7 +277,7 @@ describe('Restaurants (e2e)', () => {
         .get('/restaurants?sort=rating&order=desc')
         .expect(200)
         .expect((res) => {
-          const body = res.body as RestaurantsListResponse;
+          const body = res.body as PaginatedResponse<RestaurantWithRating>;
           expect(body.data[0].averageRating).toBe(4.5);
           expect(body.data[1].averageRating).toBe(4.0);
           expect(body.data[2].averageRating).toBe(0);
@@ -288,7 +289,7 @@ describe('Restaurants (e2e)', () => {
         .get('/restaurants?page=1&limit=2')
         .expect(200)
         .expect((res) => {
-          const body = res.body as RestaurantsListResponse;
+          const body = res.body as PaginatedResponse<RestaurantWithRating>;
           expect(body.data).toHaveLength(2);
           expect(body.page).toBe(1);
           expect(body.limit).toBe(2);
@@ -302,7 +303,7 @@ describe('Restaurants (e2e)', () => {
         .get('/restaurants?cuisine=Italian&neighborhood=Manhattan&rating=4.0')
         .expect(200)
         .expect((res) => {
-          const body = res.body as RestaurantsListResponse;
+          const body = res.body as PaginatedResponse<RestaurantWithRating>;
           expect(body.data).toHaveLength(1);
           expect(body.data[0].cuisine_type).toBe('Italian');
           expect(body.data[0].neighborhood).toBe('Manhattan');
@@ -867,7 +868,7 @@ describe('Restaurants (e2e)', () => {
         )
         .expect(200)
         .expect((res) => {
-          const body = res.body as RestaurantsListResponse;
+          const body = res.body as PaginatedResponse<RestaurantWithRating>;
           expect(body.data).toHaveLength(1);
           expect(body.data[0].cuisine_type).toBe('Italian');
           expect(body.data[0].averageRating).toBe(4.75);
@@ -881,7 +882,7 @@ describe('Restaurants (e2e)', () => {
         )
         .expect(200)
         .expect((res) => {
-          const body = res.body as RestaurantsListResponse;
+          const body = res.body as PaginatedResponse<RestaurantWithRating>;
           expect(body.data).toHaveLength(1);
           expect(body.data[0].cuisine_type).toBe('Mexican');
           expect(body.data[0].name).toBe('Second Mexican');
@@ -893,7 +894,7 @@ describe('Restaurants (e2e)', () => {
         .get('/restaurants?cuisine=French')
         .expect(200)
         .expect((res) => {
-          const body = res.body as RestaurantsListResponse;
+          const body = res.body as PaginatedResponse<RestaurantWithRating>;
           expect(body.data).toHaveLength(0);
           expect(body.total).toBe(0);
         });
@@ -904,7 +905,7 @@ describe('Restaurants (e2e)', () => {
         .get('/restaurants?cuisine=Asian')
         .expect(200)
         .expect((res) => {
-          const body = res.body as RestaurantsListResponse;
+          const body = res.body as PaginatedResponse<RestaurantWithRating>;
           expect(body.data).toHaveLength(1);
           expect(body.data[0].averageRating).toBe(0);
           expect(body.data[0].name).toBe('No Reviews Asian');

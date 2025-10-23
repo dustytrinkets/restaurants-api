@@ -21,18 +21,24 @@ import {
   ApiQuery,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { RestaurantsService } from './restaurants.service';
-import { ReviewsService } from '../reviews/reviews.service';
-import { Review } from '../entities/review.entity';
+
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { QueryRestaurantsDto } from './dto/query-restaurants.dto';
 import { RestaurantWithRatingDto } from './dto/restaurant-with-rating.dto';
 import { PaginatedResponseDto } from '../common/dto/paginated-response.dto';
+
+import { RestaurantsService } from './restaurants.service';
+import { ReviewsService } from '../reviews/reviews.service';
+
+import { Review } from '../entities/review.entity';
 import { Restaurant } from '../entities/restaurant.entity';
+
+import { RestaurantWithRating } from './interfaces/restaurant-with-rating.interface';
 import { UserRole } from '../common/enums/user-role.enum';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
+import { plainToInstance } from 'class-transformer';
 
 @ApiTags('restaurants')
 @Controller('restaurants')
@@ -89,10 +95,16 @@ export class RestaurantsController {
   @ApiResponse({
     status: 200,
     description: 'Return paginated restaurants with metadata.',
-    type: PaginatedResponseDto<RestaurantWithRatingDto>,
+    type: PaginatedResponseDto<RestaurantWithRating>,
   })
-  findAll(@Query() queryDto: QueryRestaurantsDto) {
-    return this.restaurantsService.findAll(queryDto);
+  async findAll(@Query() queryDto: QueryRestaurantsDto) {
+    const result = await this.restaurantsService.findAll(queryDto);
+    return {
+      ...result,
+      data: result.data.map((r: RestaurantWithRating) =>
+        plainToInstance(RestaurantWithRatingDto, r),
+      ),
+    };
   }
 
   @Get(':id')
@@ -105,8 +117,9 @@ export class RestaurantsController {
     type: RestaurantWithRatingDto,
   })
   @ApiResponse({ status: 404, description: 'Restaurant not found.' })
-  findOne(@Param('id') id: string) {
-    return this.restaurantsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const restaurant = await this.restaurantsService.findOne(+id);
+    return plainToInstance(RestaurantWithRatingDto, restaurant);
   }
 
   @Get(':id/reviews')
@@ -119,8 +132,9 @@ export class RestaurantsController {
     type: [Review],
   })
   @ApiResponse({ status: 404, description: 'Restaurant not found.' })
-  getReviews(@Param('id') id: string) {
-    return this.reviewsService.findByRestaurant(+id);
+  async getReviews(@Param('id') id: string) {
+    const reviews = await this.reviewsService.findByRestaurant(+id);
+    return plainToInstance(Review, reviews);
   }
 
   @Patch(':id')
