@@ -1,160 +1,85 @@
-# 🍴 Restaurants API
+# Restaurants API
 
-## 🗺️ Project Architecture Overview
+### Public endpoints:
+- [x] `GET /restaurants`:
+    - [x] Pagination: page, limit.
+	- [x] Filters: cuisine, rating, neighborhood.
+	- [x] Sorting: sort (ascendente/descendente por campo)
+- [x] `GET /restaurants/:id`
+- [x] `GET /restaurants/:id/reviews`
+- [x] `POST /auth/login`
+- [x] `POST /auth/register`
 
-This project is a NestJS backend API built in TypeScript, designed to manage restaurants, users, reviews, and favorites.
-It follows a modular and scalable architecture, aligned with best practices for maintainability and future growth.
+### Authenticated endpoints (roles: USER or ADMIN):
+- [x] `GET /me`: Information about the authenticated user.
+- [X] `GET /me/reviews`: Reviews created by the authenticated user.
+- [X] `POST /restaurants/:id/reviews`: Create a review.
+- [X] `PUT /me/reviews/:id`: Edit a review.
+- [X] `DELETE /me/reviews/:id`: Delete a review.
+- [X] `POST /me/favorites/:restaurantId`: Add a restaurant to favorites.
+- [X] `DELETE /me/favorites/:restaurantId`: Delete a restaurant from favorites.
+- [X] `GET /me/favorites`: See the list of favorites.
 
-### 📝 Architecture Diagrams
+### Admin endpoints:
+- [X] `POST /restaurants`: Create a restaurant.
+- [X] `PUT /restaurants/:id`: Edit a restaurant.
+- [X] `DELETE /restaurants/:id`: Delete a restaurant.
+- [X] `GET /admin/stats`: See statistics of: number of users, reviews, restaurants.
 
-- [API structure diagram (Modules & Middlewares)](./docs/api-structure-diagram.drawio)
-- [Sequence diagram](./docs/sequence-diagram.drawio)
-- [CI/CD workflow](./docs/cicd-flow.drawio)
-- [Current & Scaled Architecture](./docs/architecture-scaled.drawio)
+### Middlewares    
 
+- [X] Middleware for authentication
+- [X] Middleware for roles
 
-### ⚒️ Key Technologies
+### Scalability
 
-- NestJS – for structured, modular application design.
+As a second step, imagine that your application is growing over time. Scalability is key.
+You will need to think of some strategies to make your application scalable. 
 
-- TypeORM – ORM used for database management and entity relationships.
+Some pointers or ideas:
 
-- PostgreSQL – main database for persistence.
-
-- JWT Authentication – for secure user sessions.
-
-- Swagger – for API documentation can be found [here](https://restaurants-api-production-9595.up.railway.app/api/docs).
-
-- Throttler – for rate limiting and basic protection against abuse for high load endpoints .
-
-- GitHub Actions – handles continuous integration and automated testing before deployment.
-- Railway – for deployment and managed PostgreSQL hosting.
-
-### ⚙️ Main Modules
-
-- Auth Module – Handles registration, login, and JWT token generation.
-
-- Users Module – Manages user profiles and authenticated routes (/me).
-
-- Restaurants Module – Public endpoints with pagination, filters, and sorting.
-
-- Reviews Module – Allows users to create, edit, or delete reviews.
-
-- Favorites Module – Users can add or remove favorite restaurants.
-
-- Admin Module – Restricted to ADMIN users for managing restaurants and viewing statistics.
-
-### 👮🏻‍♂️ Middleware and Guards
-
-- Auth Middleware / JWT Guard – Validates tokens and attaches the authenticated user to the request.
-
-- Roles Guard – Restricts access based on user role (USER or ADMIN).
-
-- Throttler Guard – Applies request rate limits based on client IP.
-
-### 📈 Scalability Considerations
-
-The app is designed with scalability in mind:
-
-- Rate limiting and caching prepared for high-traffic environments.
-
-- Docker-ready: Can be containerized for cloud deployment.
-
-- Database pooling and pagination ensure performance under load.
-
-### 🔌 Deployment
-
-The API CI/CD is on Github Actions & Railway, which automatically build and serve the NestJS application.
-
-## 🚀 Quick Start
-
-### 💻 Development
-
-1. Add the .env file
-```bash
-NODE_ENV=development
-PORT=3000
-JWT_SECRET=dev-jwt-secret
-REDIS_HOST=localhost
-REDIS_PORT=6379
-DATABASE_URL=postgresql://localhost/restaurants_dev
-```
-
-2. Install dependencies `npm install`
-
-3. Start the local db on docker `npm run dev:db`
-
-4. Migrate existing sqlite to postgres: check the [MIGRATION_GUIDE.md](scripts/MIGRATION_GUIDE.md)
-
-4. Start development server `npm run start:dev`
-
-5. You can also start with docker `npm run docker:up`
-
-6. Run tests `npm run test:all`
+- [X] Rate Limiting
+- [X] Caching
+  - [X] GET /restaurants results
+  - [X] GET /restaurants/:id
+  - [X] GET /restaurants/:id/reviews
+  - [X] GET /admin/stats (check)
+- [X] Docker
+- [X] Database indexing: ensure indexes on cuisine, rating, neighborhood.
+- [X] Custom Migration System: Database schema management
 
 
-### 🧪 Testing
+### Architecture diagram
 
-```bash
-# Unit tests
-npm run test
+Please use [draw.io](https://draw.io), [excalidraw](https://excalidraw.com) or any similar schema tools to create a diagram of the overall architecture of your application.
 
-# E2E tests
-npm run test:e2e
+- [X] Diagram 1: expose to us how you have designed your current application.
+  - [API structure diagram (Modules & Middlewares)](./docs/api-structure-diagram.drawio)
+  - [Sequence diagram](./docs/sequence-diagram.drawio)
+  - [CI/CD workflow](./docs/cicd-flow.drawio)
 
-# All tests
-npm run test:all
-```
+Imagine that after some time our application has *100.000 users per week* and some peak timings during the day with a lot of requests & traffic. 
 
-## 📋 API Endpoints
+- [X] Diagram 2: expose to us how you would scale your application with these new conditions and what you would do to improve the performance of your application.
+  - [Current & Scaled Architecture](./docs/architecture-scaled.drawio)
 
-### Public
-- `GET /restaurants` - List restaurants (with pagination, filters, sorting)
-- `GET /restaurants/:id` - Get restaurant details
-- `GET /restaurants/:id/reviews` - Get restaurant reviews
-- `POST /auth/login` - User login
-- `POST /auth/register` - User registration
 
-### Authenticated (USER/ADMIN)
-- `GET /me` - Get user profile
-- `GET /me/reviews` - Get user's reviews
-- `POST /restaurants/:id/reviews` - Create review
-- `PUT /me/reviews/:id` - Update review
-- `DELETE /me/reviews/:id` - Delete review
-- `POST /me/favorites/:restaurantId` - Add to favorites
-- `DELETE /me/favorites/:restaurantId` - Remove from favorites
-- `GET /me/favorites` - Get user's favorites
+## Bonus points
 
-### Admin Only
-- `POST /restaurants` - Create restaurant
-- `PUT /restaurants/:id` - Update restaurant
-- `DELETE /restaurants/:id` - Delete restaurant
-- `GET /admin/stats` - Get system statistics
+- [X] Deploy the app: Deployed on Railway. Link to swagger: https://restaurants-api-production-9595.up.railway.app/api/docs
+- [X] Write realistic unit & end-to-end tests.
+- [X] Good documentation is appreciated (with tools like Swagger, Postman, etc or just explicit guidance in the README.md) (README for devs)[README-developers.md]
+- [X] For statistics: if you have time, create a query that returns the top 3 rated restaurants, the top 3 most reviewed restaurants. (GET admin/restaurants/top)
 
-## 🗄️ Database
+## TODO:
 
-### Postgres Database
-- **Migrations**: Automatic on startup (TBD on CI/CD on production)
+- [X] Review README after finishing
+- [X] Logs
 
-### Migration Commands
-```bash
-# Check migration status
-npm run migration:status
+## Future improvements
 
-# Run migrations manually
-npm run migration:run
-```
-
-## 📊 API Documentation
-
-Visit http://localhost:3000/api/docs for interactive API documentation.
-
-## 🔌 Deployment
-[CI/CD workflow](./docs/cicd-flow.drawio)
-
-### GitHub Actions & Railway
-Push to `main` branch to trigger automated deployment:
-- ✅ Runs tests
-- ✅ Builds application
-- ✅ Runs migrations
-- ✅ Deployment on railway
+- [ ] Implement redis
+- [ ] Connection pooling for DB
+- [ ] Health checks and monitoring (Prometheus, Grafana, etc).
+- [ ] Async queue for heavy tasks (reviews analytics, stats aggregation).
+- [ ] Add step to run migrations on CI on production
